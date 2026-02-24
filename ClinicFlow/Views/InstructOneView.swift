@@ -65,7 +65,7 @@ struct InstructOneView: View {
                             .id("title_\(viewModel.currentPage.id)")
 
                         Text(viewModel.currentPage.subtitle)
-                            .font(.system(size: 16, weight: .regular))
+                            .font(.system(size: 22, weight: .regular))
                             .foregroundColor(Color(red: 0.45, green: 0.45, blue: 0.45))
                             .multilineTextAlignment(.center)
                             .transition(.opacity)
@@ -80,7 +80,7 @@ struct InstructOneView: View {
                         viewModel.goToNext()
                     } label: {
                         Text("Next")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.system(size: 25, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .frame(height: 56)
