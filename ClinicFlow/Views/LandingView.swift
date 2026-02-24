@@ -56,7 +56,7 @@ struct LandingView: View {
         }
         .fullScreenCover(isPresented: $viewModel.isNavigating) {
             //Have to replace with next screen
-            Text("Next Screen")
+            InstructOneView()
         }
     }
 }
