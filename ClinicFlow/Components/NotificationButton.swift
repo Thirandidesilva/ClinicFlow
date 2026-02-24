@@ -16,6 +16,7 @@ struct NotificationButton: View {
                 Spacer()
                 
                 Button(action: action) {
+                    NavigationLink(destination: NotificationView()) {
                     Image(systemName: "bell")
                         .font(.title3)
                         .foregroundColor(.black)
@@ -23,9 +24,10 @@ struct NotificationButton: View {
                         .background(
                             Circle()
                                 .fill(Color.white)
-                                .shadow(color: .black.opacity(0.08), radius: 4, x: 0, y: 2)
+                                .shadow(color: .black.opacity(0.1), radius: 4, x: 0, y: 2)
                         )
                 }
+            }
                 .padding(.trailing, 30)
             }
             .padding(.top, 0)

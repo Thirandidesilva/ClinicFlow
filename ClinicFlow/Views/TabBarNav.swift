@@ -15,7 +15,8 @@ struct TabBarNav: View {
             TabView(selection: $activeTab) {
 
                 Tab(value: .home) {
-                    Text("Home")
+                    //Text("Home")
+                    HomeView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
 
