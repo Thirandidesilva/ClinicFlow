@@ -9,7 +9,7 @@ import SwiftUI
 
 // MARK: - InstructOneView
 // This single view handles all 5 instruction pages.
-// Only the image and text change per page — driven by OnboardingViewModel.
+// Only the image and text change per page driven by OnboardingViewModel.
 
 struct InstructOneView: View {
 
