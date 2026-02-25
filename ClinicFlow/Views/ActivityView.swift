@@ -5,10 +5,11 @@
 
 import SwiftUI
 
+// MARK: - ActivityView
+
 struct ActivityView: View {
 
     @StateObject private var viewModel = ActivityViewModel()
-    @State private var showNotifications = false
 
     var body: some View {
         NavigationStack {
@@ -18,7 +19,7 @@ struct ActivityView: View {
 
                 VStack(alignment: .leading, spacing: 0) {
 
-                    // MARK: - Title
+                    // MARK: Title
                     Text("My Bookings")
                         .font(.title2)
                         .fontWeight(.bold)
@@ -26,21 +27,37 @@ struct ActivityView: View {
                         .padding(.top, 16)
                         .padding(.bottom, 20)
 
-                    // MARK: - Tab Selector
+                    // MARK: Tab Selector
                     BookingTabSelector(selectedTab: $viewModel.selectedTab)
                         .padding(.horizontal, 24)
                         .padding(.bottom, 20)
 
-                    // MARK: - Booking List
+                    // MARK: Content
                     ScrollView {
                         VStack(spacing: 14) {
-                            ForEach(viewModel.filteredBookings) { booking in
-                                switch viewModel.selectedTab {
-                                case .upcoming:
-                                    UpcomingBookingCard(booking: booking)
-                                case .completed:
-                                    CompletedBookingCard(booking: booking)
-                                case .cancelled:
+                            switch viewModel.selectedTab {
+
+                            case .upcoming:
+                                if viewModel.upcomingBookings.isEmpty {
+                                    UpcomingEmptyStateView()
+                                        .padding(.top, 60)
+                                } else {
+                                    ForEach(viewModel.upcomingBookings) { booking in
+                                        UpcomingBookingCard(booking: booking) {
+                                            viewModel.requestCancel(booking: booking)
+                                        }
+                                    }
+                                }
+
+                            case .completed:
+                                ForEach(viewModel.completedBookings) { booking in
+                                    CompletedBookingCard(booking: booking) {
+                                        viewModel.requestReview(booking: booking)
+                                    }
+                                }
+
+                            case .cancelled:
+                                ForEach(viewModel.cancelledBookings) { booking in
                                     CancelledBookingCard(booking: booking)
                                 }
                             }
@@ -50,10 +67,33 @@ struct ActivityView: View {
                     }
                 }
 
-                // MARK: - Notification Button
+                // MARK: Notification Button
                 NotificationButton()
             }
             .navigationBarHidden(true)
+
+            // MARK: Cancel Sheet
+            .sheet(isPresented: $viewModel.showCancelSheet) {
+                CancelAppointmentSheet(
+                    onNoCancel: { viewModel.dismissCancel() },
+                    onYesCancel: { viewModel.confirmCancel() }
+                )
+                .presentationDetents([.height(320)])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(28)
+            }
+
+            // MARK: Review Sheet
+            .sheet(isPresented: $viewModel.showReviewSheet) {
+                AddReviewSheet(
+                    rating: $viewModel.reviewRating,
+                    reviewText: $viewModel.reviewText,
+                    onSubmit: { viewModel.submitReview() }
+                )
+                .presentationDetents([.height(340)])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(28)
+            }
         }
     }
 }
@@ -65,9 +105,9 @@ struct BookingTabSelector: View {
 
     var body: some View {
         HStack(spacing: 10) {
-            TabPill(title: "Upcoming",   isSelected: selectedTab == .upcoming)   { selectedTab = .upcoming }
-            TabPill(title: "Completed",  isSelected: selectedTab == .completed)  { selectedTab = .completed }
-            TabPill(title: "Cancelled",  isSelected: selectedTab == .cancelled)  { selectedTab = .cancelled }
+            TabPill(title: "Upcoming",  isSelected: selectedTab == .upcoming)  { selectedTab = .upcoming }
+            TabPill(title: "Completed", isSelected: selectedTab == .completed) { selectedTab = .completed }
+            TabPill(title: "Cancelled", isSelected: selectedTab == .cancelled) { selectedTab = .cancelled }
         }
     }
 }
@@ -142,22 +182,21 @@ struct DoctorRowHeader: View {
 
 struct UpcomingBookingCard: View {
     let booking: BookingModel
+    let onCancelTap: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             DoctorRowHeader(booking: booking)
 
             HStack(spacing: 12) {
-                // Cancel Booking
-                Button {
-                    Text("Navigate to cancel booking")
-                } label: {
+                // Cancel Booking — triggers bottom sheet
+                Button(action: onCancelTap) {
                     Text("Cancel Booking")
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(Color(hex: "E84040"))
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24)
                                 .stroke(Color(hex: "E84040"), lineWidth: 1.2)
@@ -173,11 +212,8 @@ struct UpcomingBookingCard: View {
                         .fontWeight(.medium)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .fill(Color(hex: "1A3CE8"))
-                        )
+                        .padding(.vertical, 10)
+                        .background(Capsule().fill(Color(hex: "1A3CE8")))
                 }
             }
         }
@@ -194,43 +230,40 @@ struct UpcomingBookingCard: View {
 
 struct CompletedBookingCard: View {
     let booking: BookingModel
+    let onAddReviewTap: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
             DoctorRowHeader(booking: booking)
 
             HStack(spacing: 12) {
-                // Re-Book
-                Button {
-                    // Navigate to re-book page
-                    _ = Text("Navigate to re-book page")
+                // Re-Book — navigates to booking page (placeholder)
+                NavigationLink {
+                    Text("Navigating to book page")
+                        .font(.title3)
+                        .foregroundColor(.gray)
                 } label: {
                     Text("Re - Book")
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(Color(hex: "1A3CE8"))
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
+                        .padding(.vertical, 10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 24)
                                 .stroke(Color(hex: "1A3CE8"), lineWidth: 1.2)
                         )
                 }
 
-                // Add Review
-                NavigationLink {
-                    Text("Navigate to add review page")
-                } label: {
+                // Add Review — triggers bottom sheet
+                Button(action: onAddReviewTap) {
                     Text("Add Review")
                         .font(.subheadline)
                         .fontWeight(.medium)
                         .foregroundColor(.white)
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
-                        .background(
-                            Capsule()
-                                .fill(Color(hex: "1A3CE8"))
-                        )
+                        .padding(.vertical, 10)
+                        .background(Capsule().fill(Color(hex: "1A3CE8")))
                 }
             }
         }
@@ -258,6 +291,145 @@ struct CancelledBookingCard: View {
                 .fill(Color.white)
                 .shadow(color: Color.black.opacity(0.07), radius: 8, x: 0, y: 2)
         )
+    }
+}
+
+// MARK: - Upcoming Empty State
+
+struct UpcomingEmptyStateView: View {
+    var body: some View {
+        VStack(spacing: 20) {
+            Image("img_Anotice")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 140, height: 140)
+                .foregroundColor(Color(hex: "CCCCCC"))
+
+            Text("You don't have any upcoming\nappointments at the moment")
+                .font(.subheadline)
+                .foregroundColor(Color(hex: "AAAAAA"))
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+        }
+        .frame(maxWidth: .infinity)
+    }
+}
+
+// MARK: - Cancel Appointment Sheet
+
+struct CancelAppointmentSheet: View {
+    let onNoCancel: () -> Void
+    let onYesCancel: () -> Void
+
+    var body: some View {
+        VStack(spacing: 20) {
+
+            // Red X icon image
+            Image("img_Across")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 72, height: 72)
+                .padding(.top, 10)
+
+            Text("Cancel Appointment ?")
+                .font(.title3)
+                .fontWeight(.bold)
+                .foregroundColor(Color(hex: "E84040"))
+
+            Text("This will permanently remove your slot.\nRescheduling may take longer if cancelled.")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+                .multilineTextAlignment(.center)
+                .lineSpacing(4)
+
+            HStack(spacing: 16) {
+                // No, Don't Cancel
+                Button(action: onNoCancel) {
+                    Text("No, Don't Cancel")
+                        .font(.subheadline)
+                        .fontWeight(.medium)
+                        .foregroundColor(Color(hex: "1A1A2E"))
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13)
+                        .overlay(
+                            Capsule()
+                                .stroke(Color(hex: "CCCCCC"), lineWidth: 1.2)
+                        )
+                }
+
+                // Yes, Cancel
+                Button(action: onYesCancel) {
+                    Text("Yes, Cancel")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 13)
+                        .background(Capsule().fill(Color(hex: "E84040")))
+                }
+            }
+            .padding(.bottom, 10)
+        }
+        .padding(.horizontal, 28)
+        .padding(.top, 8)
+    }
+}
+
+// MARK: - Add Review Sheet
+
+struct AddReviewSheet: View {
+    @Binding var rating: Int
+    @Binding var reviewText: String
+    let onSubmit: () -> Void
+
+    var body: some View {
+        VStack(spacing: 18) {
+
+            Text("How is Your Experience?")
+                .font(.title3)
+                .fontWeight(.bold)
+                .foregroundColor(Color(hex: "1A1A2E"))
+                .padding(.top, 16)
+
+            Text("Please take a moment to rate and review")
+                .font(.subheadline)
+                .foregroundColor(.gray)
+
+            // Star Rating
+            HStack(spacing: 10) {
+                ForEach(1...5, id: \.self) { star in
+                    Image(systemName: star <= rating ? "star.fill" : "star")
+                        .font(.title2)
+                        .foregroundColor(star <= rating ? .yellow : Color(hex: "DDDDDD"))
+                        .onTapGesture {
+                            rating = star
+                        }
+                }
+            }
+
+            // Review Text Field + Send Button
+            HStack(spacing: 10) {
+                TextField("Type a review", text: $reviewText)
+                    .font(.subheadline)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 13)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24)
+                            .stroke(Color(hex: "E0E0E0"), lineWidth: 1.2)
+                    )
+
+                // Send icon button
+                Button(action: onSubmit) {
+                    Image(systemName: "paperplane.fill")
+                        .font(.body)
+                        .foregroundColor(.white)
+                        .padding(12)
+                        .background(Circle().fill(Color(hex: "1A3CE8")))
+                }
+            }
+            .padding(.bottom, 16)
+        }
+        .padding(.horizontal, 28)
     }
 }
 

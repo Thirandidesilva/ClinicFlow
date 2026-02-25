@@ -2,13 +2,6 @@
 //  ActivityViewModel.swift
 //  ClinicFlow
 //
-//  Created by Thirandi De Silva on 2026-02-25.
-//
-
-//
-//  ActivityViewModel.swift
-//  ClinicFlow
-//
 
 import SwiftUI
 import Combine
@@ -36,8 +29,18 @@ struct BookingModel: Identifiable {
 class ActivityViewModel: ObservableObject {
     @Published var selectedTab: BookingTab = .upcoming
 
-    let allBookings: [BookingModel] = [
-        // Upcoming
+    // Sheet states
+    @Published var showCancelSheet: Bool = false
+    @Published var showReviewSheet: Bool = false
+    @Published var selectedBookingForCancel: BookingModel? = nil
+    @Published var selectedBookingForReview: BookingModel? = nil
+
+    // Review state
+    @Published var reviewRating: Int = 4
+    @Published var reviewText: String = ""
+
+    // Upcoming is mutable so we can remove items on cancel
+    @Published var upcomingBookings: [BookingModel] = [
         BookingModel(
             doctorName: "Dr. David Patel",
             speciality: "Cardiologist",
@@ -47,8 +50,10 @@ class ActivityViewModel: ObservableObject {
             reviewCount: 156,
             imageName: "img_Adoc1",
             tab: .upcoming
-        ),
-        // Completed
+        )
+    ]
+
+    let completedBookings: [BookingModel] = [
         BookingModel(
             doctorName: "Dr. Sunil Perera",
             speciality: "Neurologist",
@@ -78,8 +83,10 @@ class ActivityViewModel: ObservableObject {
             reviewCount: 156,
             imageName: "img_Adoc1",
             tab: .completed
-        ),
-        // Cancelled
+        )
+    ]
+
+    let cancelledBookings: [BookingModel] = [
         BookingModel(
             doctorName: "Dr. Kamal Perera",
             speciality: "Psychiatrists",
@@ -102,7 +109,37 @@ class ActivityViewModel: ObservableObject {
         )
     ]
 
-    var filteredBookings: [BookingModel] {
-        allBookings.filter { $0.tab == selectedTab }
+    // MARK: - Actions
+
+    func requestCancel(booking: BookingModel) {
+        selectedBookingForCancel = booking
+        showCancelSheet = true
+    }
+
+    func confirmCancel() {
+        if let booking = selectedBookingForCancel {
+            upcomingBookings.removeAll { $0.id == booking.id }
+        }
+        showCancelSheet = false
+        selectedBookingForCancel = nil
+    }
+
+    func dismissCancel() {
+        showCancelSheet = false
+        selectedBookingForCancel = nil
+    }
+
+    func requestReview(booking: BookingModel) {
+        selectedBookingForReview = booking
+        reviewRating = 4
+        reviewText = ""
+        showReviewSheet = true
+    }
+
+    func submitReview() {
+        showReviewSheet = false
+        selectedBookingForReview = nil
+        reviewText = ""
+        reviewRating = 4
     }
 }
