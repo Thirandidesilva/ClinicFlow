@@ -68,7 +68,7 @@ struct TopDrCard: View {
             }
             
             TopDrCard(
-                doctorImage: "dr.elizabeth",
+                doctorImage: "dr2",
                 doctorName: "Jonathan Smith"
             ) {
                 print("Doctor tapped")

@@ -17,6 +17,7 @@ struct TabBarNav: View {
                 Tab(value: .home) {
                     //Text("Home")
                     HomeView()
+                    //NotificationView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
 
@@ -51,7 +52,8 @@ extension UIView{ var tabController: UITabBarController? {
         return controller
     }
     return nil
-}}
+}
+}
 
 #Preview {
     TabBarNav()
