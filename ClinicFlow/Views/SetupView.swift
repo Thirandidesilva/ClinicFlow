@@ -5,9 +5,6 @@
 // Created by Thirandi De Silva on 2026-02-20
 //
 
-
-
-
 import SwiftUI
 
 struct SetupView: View {

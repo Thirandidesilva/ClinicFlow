@@ -25,7 +25,8 @@ struct TabBarNav: View {
                 }
 
                 Tab(value: .activity) {
-                    Text("Activity")
+                    //Text("Activity")
+                    ActivityView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
 
