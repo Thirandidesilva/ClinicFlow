@@ -19,6 +19,7 @@ struct TabBarNav: View {
                         HomeView()
                             .toolbarVisibility(.hidden, for: .tabBar)
                     }
+                    
 
                     Tab(value: .location) {
                         //MapView()
