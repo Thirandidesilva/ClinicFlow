@@ -5,13 +5,6 @@
 //  Created by M H T U De Silva on 2026-02-25.
 //
 
-//
-//  SpecialtyCard.swift
-//  ClinicFlow
-//
-//  Created by M H T U De Silva on 2026-02-25.
-//
-
 import SwiftUI
 
 // MARK: - SpecialtyCard (with image for dashboard)
@@ -51,7 +44,7 @@ struct SpecialtyCard: View {
     }
 }
 
-// MARK: - SpecialtyChip (text-only for filtering)
+// MARK: - SpecialtyChip
 struct SpecialtyChip: View {
     let specialty: Specialty
     let isSelected: Bool

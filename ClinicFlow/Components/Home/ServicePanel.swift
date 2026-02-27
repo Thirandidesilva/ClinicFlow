@@ -42,20 +42,23 @@ struct ServiceButton: View {
 }
 
 struct ServiceGrid: View {
+    var onAppointmentTap: () -> Void  // Add this parameter
+    var onPharmacyTap: () -> Void
+    
     var body: some View {
         HStack(spacing: 10) {
             ServiceButton(
                 imageName: "appointment",
                 title: "Appointment"
             ) {
-                print("Appointment tapped")
+                onAppointmentTap()  // Call the closure
             }
             
             ServiceButton(
                 imageName: "pharmacy",
                 title: "Pharmacy"
             ) {
-                print("Pharmacy tapped")
+                onPharmacyTap()
             }
             
             ServiceButton(
@@ -73,14 +76,19 @@ struct ServiceGrid: View {
             }
             .padding(.top, 15)
         }
-        //.padding(.horizontal, 24)
     }
 }
 
 #Preview {
     VStack(spacing: 0) {
-        // Preview full grid
-        ServiceGrid()
+        ServiceGrid(
+            onAppointmentTap: {
+                print("Appointment tapped in preview")
+            },
+            onPharmacyTap: {
+                print("Pharmacy tapped in preview")
+            }
+        )
     }
     .background(Color(hex: "FFFFFF"))
 }
