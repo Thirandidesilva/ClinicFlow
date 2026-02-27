@@ -13,45 +13,41 @@ struct TabBarNav: View {
     var body: some View {
         if #available(iOS 18, *) {
             TabView(selection: $activeTab) {
-
                 Tab(value: .home) {
                     Text("Home")
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
-
                 Tab(value: .location) {
                     Text("Map")
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
-
                 Tab(value: .activity) {
-                    //Text("Activity")
                     ActivityView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
-
                 Tab(value: .account) {
-                    Text("Account")
+                    AccountView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
             }
             .overlay(alignment: .bottom) {
-                        CustomTabBar(activeTab: $activeTab)
-                            .padding(.bottom, -20)
-                            .shadow(color: .black.opacity(0.15), radius: 10)
-                    }
+                CustomTabBar(activeTab: $activeTab)
+            }
+            .ignoresSafeArea(edges: .bottom)
         }
     }
 }
 
 // MARK: - UIView Extension
-extension UIView{ var tabController: UITabBarController? {
-    if let controller = sequence(first: self, next: { $0.next })
-        .first(where: { $0 is UITabBarController }) as? UITabBarController {
-        return controller
+extension UIView {
+    var tabController: UITabBarController? {
+        if let controller = sequence(first: self, next: { $0.next })
+            .first(where: { $0 is UITabBarController }) as? UITabBarController {
+            return controller
+        }
+        return nil
     }
-    return nil
-}}
+}
 
 #Preview {
     TabBarNav()
