@@ -122,7 +122,7 @@ struct AccountView: View {
                         .background(Color(hex: "F5F5F5"))
 
                         // MARK: Health Records
-                        NavigationLink(destination: HealthRecordsPlaceholderView()) {
+                        NavigationLink(destination: HealthRecordsView()) {
                             HStack(spacing: 12) {
                                 Image("icn_healthcross")
                                     .resizable()
@@ -148,7 +148,6 @@ struct AccountView: View {
                         .padding(.bottom, 24)
 
                         // MARK: Log Out Button
-                        // Bottom padding of 100 ensures Log Out clears the fixed nav bar
                         Button(action: {
                             viewModel.logOut()
                         }) {
@@ -189,14 +188,6 @@ struct InfoRow: View {
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 16)
-    }
-}
-
-// MARK: - Health Records Placeholder
-struct HealthRecordsPlaceholderView: View {
-    var body: some View {
-        Text("Navigate to Health Record Page")
-            .navigationTitle("Health Records")
     }
 }
 
