@@ -2,7 +2,7 @@
 //  OtherPatientRecordView.swift
 //  ClinicFlow
 //
-//  Created by M H T U De Silva
+//  Created by Thirandi De Silva on 2026-02-28
 //
 
 import SwiftUI
