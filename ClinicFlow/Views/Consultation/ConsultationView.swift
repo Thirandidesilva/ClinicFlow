@@ -5,13 +5,6 @@
 //  Created by M H T U De Silva on 2026-02-27.
 //
 
-//
-//  ConsultationView.swift
-//  ClinicFlow
-//
-//  Created by M H T U De Silva on 2026-02-27.
-//
-
 import SwiftUI
 
 struct ConsultationView: View {
@@ -42,47 +35,24 @@ struct ConsultationView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     
                     // MARK: - Notification Message
-                                        HStack(spacing: 10) {
-                                            Image(systemName: "bell.fill")
-                                                .font(.system(size: 16))
-                                                .foregroundColor(Color(hex: "0930A6"))
-                                                
-                                            
-                                            Text("You will receive an automatic notification when your turn is approaching")
-                                                .font(.system(size: 16))
-                                                .foregroundColor(Color(hex: "0930A6"))
-                                                .fixedSize(horizontal: false, vertical: true)
-                                        }
-                                        .padding(16)
-                                        .background(
-                                            RoundedRectangle(cornerRadius: 12)
-                                                //.fill(Color(hex: "0930A6").opacity(0.1))
-                                                .stroke(Color(hex: "0930A6").opacity(0.2), lineWidth: 1)
-                                        )
-                                        
-                                        .padding(.horizontal, 15)
-                                        .padding(.top, 90)
-                    
-                    // MARK: - Notification Message
-//                    HStack(spacing: 12) {
-//                        Image(systemName: "bell.fill")
-//                            .font(.system(size: 16))
-//                            .foregroundColor(Color(hex: "0930A6"))
-//                            
-//                        
-//                        Text("You will receive an automatic notification when your turn is approaching")
-//                            .font(.system(size: 16))
-//                            .foregroundColor(Color(hex: "0930A6"))
-//                            .fixedSize(horizontal: false, vertical: true)
-//                    }
-//                    .padding(.horizontal, 60)
-//
-//                    .background(
-//                        RoundedRectangle(cornerRadius: 12)
-//                            .stroke(Color(hex: "0930A6").opacity(0.2), lineWidth: 1)
-//                    )
-//                    .padding(.horizontal, 24)
-//                    .padding(.top, 90)
+                    HStack(spacing: 10) {
+                        Image(systemName: "bell.fill")
+                            .font(.system(size: 16))
+                            .foregroundColor(Color(hex: "0930A6"))
+                            
+                        
+                        Text("You will receive an automatic notification when your turn is approaching")
+                            .font(.system(size: 16))
+                            .foregroundColor(Color(hex: "0930A6"))
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    .padding(16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(Color(hex: "0930A6").opacity(0.2), lineWidth: 1)
+                    )
+                    .padding(.horizontal, 15)
+                    .padding(.top, 90)
                     
                     // MARK: - Queue Number Token
                     VStack(spacing: 16) {
@@ -118,81 +88,18 @@ struct ConsultationView: View {
                     )
                     .padding(.horizontal, 24)
                     
-                    // MARK: - Queue Progress Section (Combined Frame)
-                    VStack(spacing: 20) {
-                        // Queue Progress Header and Content
-                        VStack(alignment: .leading, spacing: 16) {
-                            // Header with Live indicator
-                            HStack {
-                                Text("Queue Progress")
-                                    .font(.system(size: 18, weight: .bold))
-                                    .foregroundColor(.black)
-                                
-                                Spacer()
-                                
-                                // Live indicator
-                                HStack(spacing: 6) {
-                                    Circle()
-                                        .fill(Color.red)
-                                        .frame(width: 8, height: 8)
-                                    
-                                    Text("Live")
-                                        .font(.system(size: 12, weight: .semibold))
-                                        .foregroundColor(.red)
-                                }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 6)
-                                .background(
-                                    Capsule()
-                                        .fill(Color.red.opacity(0.1))
-                                )
-                            }
-                            
-                            // Queue circles with connecting lines
-                            HStack(spacing: 0) {
-                                ForEach(Array(viewModel.queueItems.enumerated()), id: \.element.id) { index, item in
-                                    QueueNumberCircle(number: item.number, status: item.status)
-                                    
-                                    // Connecting line (except for last item)
-                                    if index < viewModel.queueItems.count - 1 {
-                                        Rectangle()
-                                            .fill(lineColor(for: item.status))
-                                            .frame(height: 3)
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.bottom, 30)
-                                    }
-                                }
-                            }
-                        }
-                        
-                        // Info Cards
-                        HStack(spacing: 16) {
-                            QueueInfoCard(
-                                title: "estimated wait",
-                                value: viewModel.estimatedWaitTime
-                            )
-                            
-                            QueueInfoCard(
-                                title: "ahead of you",
-                                value: String(format: "%02d", viewModel.peopleAhead)
-                            )
-                        }
-                    }
-                    .padding(20)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color.white)
+                    // MARK: - Queue Progress Card
+                    QueueProgressCard(
+                        queueItems: viewModel.queueItems,
+                        estimatedWait: viewModel.estimatedWaitTime,
+                        aheadOfYou: String(format: "%02d", viewModel.peopleAhead)
                     )
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 16)
-                            .stroke(Color(hex: "FFFFFF").opacity(0.2), lineWidth: 1)
-                    )
-                    .shadow(color: Color(hex: "0930A6").opacity(0.15), radius: 50, x: 1, y: 1)
-                    .padding(.horizontal, 24)
                     
                     // MARK: - Complete Session Button
                     Button(action: {
                         viewModel.completeSession()
+                        // Navigate back to HomeView
+                        //dismiss()
                     }) {
                         Text("Complete Session")
                             .font(.system(size: 18, weight: .semibold))
@@ -231,18 +138,6 @@ struct ConsultationView: View {
         }
         .navigationDestination(isPresented: $viewModel.showReviewPage) {
             ReviewView()
-        }
-    }
-    
-    // MARK: - Line Color Logic
-    private func lineColor(for status: QueueItem.QueueStatus) -> Color {
-        switch status {
-        case .done:
-            return Color(hex: "0930A6")
-        case .current:
-            return Color.green
-        case .next, .user, .upcoming:
-            return Color.gray.opacity(0.3)
         }
     }
 }

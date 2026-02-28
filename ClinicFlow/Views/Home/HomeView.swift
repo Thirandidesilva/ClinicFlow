@@ -10,8 +10,11 @@ import SwiftUI
 struct HomeView: View {
     
     @State private var showNotifications = false
+    @State private var goToConsultation = false
+    
     @State private var goToAppointment = false //onPharmacyTap()
     @State private var goToPharmacy = false
+    
     
     var body: some View {
         ZStack {
@@ -27,7 +30,7 @@ struct HomeView: View {
                         .font(.title)
                         .fontWeight(.semibold)
                         .padding(.leading, 30)
-                        .padding(.top, 60)
+                        .padding(.top, 16)
                     
                     Text("Welcome to Clinic Flow")
                         .font(.subheadline)
@@ -82,7 +85,7 @@ struct HomeView: View {
                         rating: 5.0,
                         reviewCount: 156
                     ) {
-                        print("Check In tapped")
+                        goToConsultation = true
                     }
                     .padding(.top, 16)
                     
@@ -110,6 +113,10 @@ struct HomeView: View {
                     .padding(.bottom, 60)
                 }
             }
+            .navigationDestination(isPresented: $goToConsultation) {
+                ConsultationView()
+            }
+
             .navigationDestination(isPresented: $goToAppointment) {
                 AppointmentDashboardView()
             }
