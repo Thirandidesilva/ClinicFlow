@@ -9,12 +9,14 @@ import SwiftUI
 
 struct AccountView: View {
     @StateObject private var viewModel = AccountViewModel()
+    @State private var showLogoutSheet = false
+    @State private var navigateToSetup = false
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
 
-                // MARK: Fixed Header (stays pinned, never scrolls)
+                // MARK: Fixed Header
                 ZStack(alignment: .trailing) {
                     Color(hex: "F5F5F5")
 
@@ -26,7 +28,6 @@ struct AccountView: View {
                     }
                     .padding(.horizontal, 24)
 
-                    // Notification button pinned to right of header
                     HStack {
                         Spacer()
                         NotificationButton()
@@ -149,7 +150,7 @@ struct AccountView: View {
 
                         // MARK: Log Out Button
                         Button(action: {
-                            viewModel.logOut()
+                            showLogoutSheet = true
                         }) {
                             Text("Log Out")
                                 .font(.body)
@@ -168,7 +169,99 @@ struct AccountView: View {
             }
             .background(Color(hex: "F5F5F5").ignoresSafeArea())
             .navigationBarHidden(true)
+
+            // MARK: Navigate to Setup after logout
+            .navigationDestination(isPresented: $navigateToSetup) {
+                SetupView()
+            }
         }
+
+        // MARK: Logout Bottom Sheet
+        .sheet(isPresented: $showLogoutSheet) {
+            LogoutSheetView(
+                onCancel: {
+                    showLogoutSheet = false
+                },
+                onConfirm: {
+                    showLogoutSheet = false
+                    viewModel.logOut()
+                    navigateToSetup = true
+                }
+            )
+            .presentationDetents([.height(350)])
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(28)
+            .presentationBackground(Color.white)
+        }
+    }
+}
+
+// MARK: - Logout Bottom Sheet View
+struct LogoutSheetView: View {
+    let onCancel: () -> Void
+    let onConfirm: () -> Void
+
+    var body: some View {
+        VStack(spacing: 0) {
+
+            // MARK: Icon
+            Image("icn_plogout")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 56, height: 56)
+                .padding(.top, 32)
+                .padding(.bottom, 16)
+
+            // MARK: Title
+            Text("Logging Out ?")
+                .font(.title3)
+                .fontWeight(.bold)
+                .foregroundColor(Color(hex: "1A1AE6"))
+                .padding(.bottom, 10)
+
+            // MARK: Description
+            Text("You'll lose your real-time updates after logging out. Are you sure you want to logout?")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.horizontal, 32)
+                .padding(.bottom, 28)
+
+            // MARK: Buttons
+            HStack(spacing: 12) {
+                // No, Don't logout
+                Button(action: onCancel) {
+                    Text("No, Don't logout")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color.white)
+                        .cornerRadius(30)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 30)
+                                .stroke(Color(hex: "DDDDDD"), lineWidth: 1.5)
+                        )
+                }
+
+                // Yes, Logout
+                Button(action: onConfirm) {
+                    Text("Yes, Logout")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.white)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
+                        .background(Color(hex: "1A1AE6"))
+                        .cornerRadius(30)
+                }
+            }
+            .padding(.horizontal, 24)
+            .padding(.bottom, 30)
+        }
+        .frame(maxWidth: .infinity)
     }
 }
 
@@ -190,6 +283,7 @@ struct InfoRow: View {
         .padding(.vertical, 16)
     }
 }
+
 
 #Preview {
     AccountView()
