@@ -8,14 +8,13 @@
 import SwiftUI
 
 struct TopDrCard: View {
-    let doctorImage: String
-    let doctorName: String
-    let onTap: () -> Void
+    let doctor: Doctor
+    @State private var navigateToDetails = false
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
             // Doctor image background
-            Image(doctorImage)
+            Image(doctor.image)
                 .resizable()
                 .scaledToFill()
                 .frame(width: 150, height: 220)
@@ -23,15 +22,15 @@ struct TopDrCard: View {
             
             // Name card overlay
             HStack {
-                Text(doctorName)
+                Text(doctor.name)
                     .font(.system(size: 10, weight: .bold))
                     .foregroundColor(.black)
                     .lineLimit(2)
                 
-                //Spacer()
-                
                 // Arrow button with gray circle background
-                Button(action: onTap) {
+                Button(action: {
+                    navigateToDetails = true
+                }) {
                     ZStack {
                         Circle()
                             .fill(Color.gray.opacity(0.2))
@@ -54,27 +53,21 @@ struct TopDrCard: View {
         }
         .frame(width: 150, height: 220)
         .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 4)
+        .navigationDestination(isPresented: $navigateToDetails) {
+            DoctorDetailView(doctor: doctor)
+        }
     }
 }
 
 #Preview {
-    ScrollView(.horizontal, showsIndicators: false) {
-        HStack(spacing: 20) {
-            TopDrCard(
-                doctorImage: "dr.elizabeth",
-                doctorName: "Elizabeth Blackwell"
-            ) {
-                print("Doctor tapped")
+    NavigationStack {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 20) {
+                TopDrCard(doctor: Doctor.sampleDoctors[0])
+                TopDrCard(doctor: Doctor.sampleDoctors[1])
             }
-            
-            TopDrCard(
-                doctorImage: "dr2",
-                doctorName: "Jonathan Smith"
-            ) {
-                print("Doctor tapped")
-            }
+            .padding(.horizontal, 24)
         }
-        .padding(.horizontal, 24)
+        .background(Color(hex: "FFFFFF"))
     }
-    .background(Color(hex: "FFFFFF"))
 }

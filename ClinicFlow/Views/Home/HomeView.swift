@@ -24,118 +24,99 @@ struct HomeView: View {
             Color(hex: "FFFFFF")
                 .ignoresSafeArea()
             
-            // MARK: - Content
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 0) {
-                    
+            VStack(spacing: 0) {
+                // MARK: - Fixed Header (Non-scrollable)
+                VStack(alignment: .leading, spacing: 4) {
                     Text("Hi, Kaveen")
                         .font(.title)
                         .fontWeight(.semibold)
-                        .padding(.leading, 30)
-                        .padding(.top, 16)
                     
                     Text("Welcome to Clinic Flow")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                        .padding(.leading, 30)
-                        .padding(.top, 2)
-                    
-                    Text("What would you like to do today?")
-                        .font(.title2)
-                        .fontWeight(.semibold)
-                        .padding(.leading, 25)
-                        .padding(.top, 30)
-                    
-                    // MARK: - Service Grid
-                    ServiceGrid(
-                        onAppointmentTap: {
-                            goToAppointment = true
-                        },
-                        onPharmacyTap: {
-                            goToPharmacy = true
-                        },
-                        onLabTap: {
-                            goToLab = true
-                        },
-                        onEmergencyLabTap: {
-                            goToEmergencyLab = true
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 10)
+                .padding(.bottom, 16)
+                .background(Color.white)
+                
+                // MARK: - Scrollable Content
+                ScrollView(.vertical, showsIndicators: false) {
+                    VStack(alignment: .leading, spacing: 24) {
+                        
+                        Text("What would you like to do today?")
+                            .font(.title2)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 24)
+                        
+                        // MARK: - Service Grid
+                        ServiceGrid(
+                            onAppointmentTap: {
+                                goToAppointment = true
+                            },
+                            onPharmacyTap: {
+                                goToPharmacy = true
+                            },
+                            onLabTap: {
+                                goToLab = true
+                            },
+                            onEmergencyLabTap: {
+                                goToEmergencyLab = true
+                            }
+                        )
+                        .padding(.horizontal, 24)
+                        
+                        // MARK: - Visit Journey
+                        Text("Visit Journey")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 24)
+                        
+                        VisitJoourney(
+                            steps: ["Checkin", "Consultation", "Pharmacy", "Lab"],
+                            currentStep: 1
+                        )
+                        
+                        // MARK: - Upcoming Appointment
+                        Text("Upcoming Appointment")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 24)
+                        
+                        UpcomingDrCard(
+                            date: "1st of March 2026",
+                            time: "1.30 PM",
+                            doctorImage: "dr.elizabeth",
+                            doctorName: "Elizabeth Blackwell",
+                            speciality: "Cardiologist",
+                            rating: 5.0,
+                            reviewCount: 156
+                        ) {
+                            goToConsultation = true
                         }
-                    )
-                    .padding(.top, 20)
-                    .padding(.leading, 24)
-                    .padding(.bottom, 30)
-                    
-                    // MARK: - Visit Journey
-                    Text("Visit Journey")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .padding(.leading, 30)
-                    
-                    VisitJoourney(
-                        steps: ["Checkin", "Consultation", "Pharmacy", "Lab"],
-                        currentStep: 1
-                    )
-                    .padding(.top, 20)
-                    .padding(.bottom, 30)
-                    
-                    // MARK: - Upcoming Appointment
-                    Text("Upcoming Appointment")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .padding(.leading, 30)
-                    
-                    UpcomingDrCard(
-                        date: "1st of March 2026",
-                        time: "1.30 PM",
-                        doctorImage: "dr.elizabeth",
-                        doctorName: "Elizabeth Blackwell",
-                        speciality: "Cardiologist",
-                        rating: 5.0,
-                        reviewCount: 156
-                    ) {
-                        goToConsultation = true
-                    }
-                    .padding(.top, 16)
-                    
-                    // MARK: -Top Doctors
-                    Text("Top Doctors")
-                        .font(.headline)
-                        .fontWeight(.semibold)
-                        .padding(.leading, 30)
-                        .padding(.top, 30)
-                    
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 16) {
-                            ForEach(Doctor.sampleDoctors.prefix(4)) { doctor in
-                                TopDrCard(
-                                    doctorImage: doctor.image,
-                                    doctorName: doctor.name
-                                ) {
-                                    print("\(doctor.name) tapped")
+                        
+                        // MARK: - Top Doctors
+                        Text("Top Doctors")
+                            .font(.title3)
+                            .fontWeight(.semibold)
+                            .padding(.leading, 24)
+                        
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(spacing: 16) {
+                                ForEach(Doctor.sampleDoctors.prefix(4)) { doctor in
+                                    TopDrCard(doctor: doctor)
                                 }
                             }
+                            .padding(.horizontal, 24)
                         }
-                        .padding(.horizontal, 24)
+                        .padding(.bottom, 120)
                     }
-                    .padding(.top, 16)
-                    .padding(.bottom, 60)
-                }
-                
-                // MARK: - Notification Button (Top Right)
-                VStack {
-                    HStack {
-                        Spacer()
-                        NotificationButton()
-                            .padding(.trailing, 0)
-                            .padding(.top, 0)
-                    }
-                    Spacer()
                 }
             }
             .navigationDestination(isPresented: $goToConsultation) {
                 ConsultationView()
             }
-
             .navigationDestination(isPresented: $goToAppointment) {
                 AppointmentDashboardView()
             }
@@ -149,10 +130,18 @@ struct HomeView: View {
                 EmergencyLabView()
             }
             
-            // MARK: Notification button
-            NotificationButton()
+            // MARK: - Notification Button (Top Right)
+            VStack {
+                HStack {
+                    Spacer()
+                    NotificationButton()
+                        .padding(.trailing, 10)
+                        .padding(.top, 10)
+                }
+                Spacer()
+            }
         }
-        .navigationBarHidden(false)
+        .navigationBarHidden(true)
     }
 }
 
