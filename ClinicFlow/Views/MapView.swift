@@ -11,16 +11,19 @@ struct MapView: View {
     @StateObject private var viewModel = MapViewModel()
 
     var body: some View {
-        ZStack {
-            if viewModel.showDirections {
-                DirectionsView(viewModel: viewModel)
-                    .transition(.move(edge: .trailing))
-            } else {
-                MainMapView(viewModel: viewModel)
-                    .transition(.move(edge: .leading))
+        NavigationStack {
+            ZStack {
+                if viewModel.showDirections {
+                    DirectionsView(viewModel: viewModel)
+                        .transition(.move(edge: .trailing))
+                } else {
+                    MainMapView(viewModel: viewModel)
+                        .transition(.move(edge: .leading))
+                }
             }
+            .animation(.easeInOut(duration: 0.3), value: viewModel.showDirections)
+            .navigationBarHidden(true)
         }
-        .animation(.easeInOut(duration: 0.3), value: viewModel.showDirections)
     }
 }
 
