@@ -1,14 +1,14 @@
 //
-//  PhrmacyProgressSteps.swift
+//  EmergencyProcessCard.swift
 //  ClinicFlow
 //
-//  Created by M H T U De Silva on 2026-02-28.
+//  Created by M H T U De Silva on 2026-03-01.
 //
 
 import SwiftUI
 
-struct PharmacyProgressSteps: View {
-    let steps: [PharmacyStep]
+struct EmergencyProcessCard: View {
+    let steps: [LabSteps]
     
     var body: some View {
         HStack(spacing: 0) {
@@ -31,8 +31,8 @@ struct PharmacyProgressSteps: View {
                         VStack(spacing: 8) {
                             ZStack {
                                 if step.status == .completed || step.status == .inProgress {
-                                    Circle()
-                                        .fill(Color(hex: "0930A6").opacity(0.12))
+                                    Circle()//Color(hex: "E01F20")
+                                        .fill(Color(hex: "E01F20").opacity(0.12))
                                         .frame(width: 53, height: 53)
                                 }
                                 
@@ -69,21 +69,21 @@ struct PharmacyProgressSteps: View {
     
     // MARK: - Styling Functions
     
-    private func strokeColor(for status: PharmacyStep.StepStatus) -> Color {
+    private func strokeColor(for status: LabSteps.StepStatus) -> Color {
         switch status {
         case .completed:
-            return Color(hex: "0930A6")
+            return Color(hex: "E01F20")
         case .inProgress:
-            return Color(hex: "0930A6")
+            return Color(hex: "E01F20")
         case .pending, .notStarted:
             return Color.gray.opacity(0.3)
         }
     }
     
-    private func fillColor(for status: PharmacyStep.StepStatus) -> Color {
+    private func fillColor(for status: LabSteps.StepStatus) -> Color {
         switch status {
         case .completed:
-            return Color(hex: "0930A6")
+            return Color(hex: "E01F20")
         case .inProgress:
             return Color.white
         case .pending, .notStarted:
@@ -91,21 +91,21 @@ struct PharmacyProgressSteps: View {
         }
     }
     
-    private func textColor(for status: PharmacyStep.StepStatus) -> Color {
+    private func textColor(for status: LabSteps.StepStatus) -> Color {
         switch status {
         case .completed:
             return .white
         case .inProgress:
-            return Color(hex: "0930A6")
+            return Color(hex: "E01F20")
         case .pending, .notStarted:
             return Color.gray
         }
     }
     
-    private func lineColor(for status: PharmacyStep.StepStatus) -> Color {
+    private func lineColor(for status: LabSteps.StepStatus) -> Color {
         switch status {
         case .completed:
-            return Color(hex: "0930A6")
+            return Color(hex: "E01F20")
         case .inProgress, .pending, .notStarted:
             return Color.gray.opacity(0.3)
         }
@@ -113,11 +113,12 @@ struct PharmacyProgressSteps: View {
 }
 
 #Preview {
-    PharmacyProgressSteps(steps: [
-        PharmacyStep(id: "1", number: 1, title: "Token\nReceived",       status: .completed),
-        PharmacyStep(id: "2", number: 2, title: "Got the\nPrescription", status: .completed),
-        PharmacyStep(id: "3", number: 3, title: "Preparing\nDrugs",      status: .inProgress),
-        PharmacyStep(id: "4", number: 4, title: "Get your\nMedicines",   status: .notStarted)
+    EmergencyProcessCard(steps: [
+        LabSteps(id: "1", number: 1, title: "Token Received", status: .completed),
+        LabSteps(id: "2", number: 2, title: "Got the Prescription", status: .inProgress),
+        LabSteps(id: "3", number: 3, title: "Collect Sample", status: .pending),
+        LabSteps(id: "4", number: 4, title: "Preparing Report", status: .notStarted),
+        LabSteps(id: "5", number: 5, title: "Get your Report", status: .notStarted)
     ])
     .background(Color.gray.opacity(0.1))
 }

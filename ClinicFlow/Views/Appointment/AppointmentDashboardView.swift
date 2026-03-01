@@ -10,7 +10,10 @@ import SwiftUI
 struct AppointmentDashboardView: View {
     
     @State private var showNotifications = false
+    @State private var selectedSpecialty: Specialty? = nil
+    @State private var navigateToSpecialtyTab = false
     @StateObject private var viewModel = AppointmentViewModel()
+    @Environment(\.dismiss) var dismiss
     
     var body: some View {
         
@@ -34,9 +37,6 @@ struct AppointmentDashboardView: View {
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .padding(.leading, 30)
-                            //.padding(.top, 5)
-                        
-                        
                         
                         Text("Let's search for your Doctor")
                             .font(.title2)
@@ -50,7 +50,7 @@ struct AppointmentDashboardView: View {
                             Image(systemName: "magnifyingglass")
                                 .foregroundColor(Color(hex: "0930A6").opacity(0.7))
                             TextField("Search", text: $viewModel.searchText)
-                                .font(.system(size: 16), )
+                                .font(.system(size: 16))
                             Button(action: viewModel.startVoiceSearch) {
                                 Image(systemName: "mic.fill")
                                     .foregroundColor(Color(hex: "0930A6").opacity(0.7))
@@ -64,27 +64,25 @@ struct AppointmentDashboardView: View {
                         )
                         .padding(.horizontal, 24)
                         
-                        
-                        // MARK: - Speacilialities
+                        // MARK: - Specialities
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
                                 ForEach(Specialty.allSpecialties) { specialty in
-                                                SpecialtyCard(
-                                                    specialty: specialty,
-                                                    isSelected: specialty.id == "1"
-                                                ) {
-                                                    print("\(specialty.name) tapped")
-                                                }
-                                            }
-                                
-                                .padding(.bottom, 0)
+                                    SpecialtyCard(
+                                        specialty: specialty,
+                                        isSelected: false
+                                    ) {
+                                        selectedSpecialty = specialty
+                                        navigateToSpecialtyTab = true
+                                    }
+                                    .padding(.bottom, 0)
+                                }
                             }
                             .padding(.horizontal, 24)
                             .padding(.top, 30)
-                            
                         }
                         
-                        //MARK: - Receant Consultations
+                        //MARK: - Recent Consultations
                         HStack {
                             Text("Recent Consultations")
                                 .font(.system(size: 16, weight: .medium))
@@ -92,7 +90,10 @@ struct AppointmentDashboardView: View {
                             
                             Spacer()
                             
-                            Button(action: {}) {
+                            Button(action: {
+                                selectedSpecialty = Specialty.allSpecialties.first
+                                navigateToSpecialtyTab = true
+                            }) {
                                 Text("See All")
                                     .font(.system(size: 14))
                                     .foregroundColor(Color(hex: "0930A6"))
@@ -113,17 +114,44 @@ struct AppointmentDashboardView: View {
                                 }
                             }
                         }
-                        //.padding(.bottom, 120)
-                    
                         .padding(.top, 16)
                         .padding(.bottom, 120)
                     }
                 }
-                    
-                    // MARK: - Notification button
-                    NotificationButton()
+                
+                // MARK: - Back Button (Top Left)
+                VStack {
+                    HStack {
+                        Button(action: {
+                            dismiss()
+                        }) {
+                            Image(systemName: "chevron.left")
+                                .font(.system(size: 20, weight: .semibold))
+                                .foregroundColor(.black)
+                                .frame(width: 40, height: 40)
+                                .background(
+                                    Circle()
+                                        .fill(Color.white)
+                                        .shadow(color: .black.opacity(0.1), radius: 4)
+                                )
+                        }
+                        .padding(.leading, 24)
+                        .padding(.top, 60)
+                        
+                        Spacer()
+                    }
+                    Spacer()
                 }
-                .navigationBarHidden(true)
+                
+                // MARK: - Notification button
+                NotificationButton()
+            }
+            .navigationBarHidden(true)
+            .navigationDestination(isPresented: $navigateToSpecialtyTab) {
+                if let specialty = selectedSpecialty {
+                    SpecialtyTabView(preselectedSpecialty: specialty)
+                }
+            }
         }
     }
 }

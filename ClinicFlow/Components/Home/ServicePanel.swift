@@ -44,6 +44,8 @@ struct ServiceButton: View {
 struct ServiceGrid: View {
     var onAppointmentTap: () -> Void  // Add this parameter
     var onPharmacyTap: () -> Void
+    var onLabTap: () -> Void //onEmergencyLabTap
+    var onEmergencyLabTap: () -> Void
     
     var body: some View {
         HStack(spacing: 10) {
@@ -65,14 +67,14 @@ struct ServiceGrid: View {
                 imageName: "lab",
                 title: "Laboratory"
             ) {
-                print("Laboratory tapped")
+                onLabTap()
             }
             
             ServiceButton(
                 imageName: "emergency",
                 title: "Emergency Lab"
             ) {
-                print("Emergency Lab tapped")
+                onEmergencyLabTap()
             }
             .padding(.top, 15)
         }
@@ -87,6 +89,12 @@ struct ServiceGrid: View {
             },
             onPharmacyTap: {
                 print("Pharmacy tapped in preview")
+            },
+            onLabTap: {
+                print("Laboratory tapped in preview")
+            },
+            onEmergencyLabTap: {
+                print("Laboratory tapped in preview")
             }
         )
     }

@@ -1,5 +1,5 @@
 //
-//  SpecialityTabViewModel.swift
+//  SpecialtyTabViewModel.swift
 //  ClinicFlow
 //
 //  Created by M H T U De Silva on 2026-02-26.
@@ -17,13 +17,17 @@ class SpecialtyTabViewModel: ObservableObject {
     
     private var cancellables = Set<AnyCancellable>()
     
-    init() {
+    init(preselectedSpecialty: Specialty? = nil) {
         // Load all specialties first
         let loadedSpecialties = Specialty.allSpecialties
         self.specialties = loadedSpecialties
         
-        // Set "General" as default
-        self.selectedSpecialty = loadedSpecialties.first ?? Specialty(id: "1", name: "General", imageName: "stethoscope", backgroundColor: "C8E6F5")
+        // Set preselected specialty or default to General
+        if let preselected = preselectedSpecialty {
+            self.selectedSpecialty = preselected
+        } else {
+            self.selectedSpecialty = loadedSpecialties.first ?? Specialty(id: "1", name: "General", imageName: "stethoscope", backgroundColor: "C8E6F5")
+        }
         
         loadDoctors()
         setupObservers()

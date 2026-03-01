@@ -1,14 +1,14 @@
 //
-//  PharmacyView.swift
+//  LabView.swift
 //  ClinicFlow
 //
-//  Created by M H T U De Silva on 2026-02-27.
+//  Created by M H T U De Silva on 2026-03-01.
 //
 
 import SwiftUI
 
-struct PharmacyView: View {
-    @StateObject private var viewModel = PharmacyViewModel()
+struct LabView: View {
+    @StateObject private var viewModel = LabViewModel()
     @Environment(\.dismiss) var dismiss
     //@EnvironmentObject var tabManager: TabBarManager
     @State private var navigateToHome = false
@@ -17,7 +17,7 @@ struct PharmacyView: View {
         ZStack {
             Color.white.ignoresSafeArea()
             
-            //ScrollView(.vertical, showsIndicators: false) {
+            ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 24) {
                     
                     // MARK: - Header
@@ -26,7 +26,7 @@ struct PharmacyView: View {
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                         
-                        Text("PHARMACY")
+                        Text("LABORTARY")
                             .font(.system(size: 24, weight: .bold))
                             .foregroundColor(.black)
                     }
@@ -53,15 +53,29 @@ struct PharmacyView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(.gray.opacity(0.2), lineWidth: 1)
                     )
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 30)
                     .padding(.top, 10)
                     
-                    // MARK: - Pharmacy Progress Steps
-                    PharmacyProgressSteps(steps: viewModel.steps)
+                    // MARK: - Lab Progress Steps
+                    LabProgressCard(steps: viewModel.steps)
                     
-                    // MARK: - Pharmacy Token Card
-                    PharmacyTokenCard(
-                        token: viewModel.pharmacyToken,
+                    // MARK: - Preparation Instructions
+                    PreparationInstructionCard(instructions: [
+                        PreparationInstruction(
+                            icon: "scissors",
+                            text: "Please fast for 8 hours prior to your test. No food or drinks (except water) after midnight."
+                        ),
+                        PreparationInstruction(
+                            icon: "doc.text",
+                            text: "Bring any relevant medical reports or referral letters"
+                        )
+                    ])
+                    .padding(.horizontal, 40)
+                        
+                    
+                    // MARK: - Lab Token Card
+                    LabTokenCard(
+                        token: viewModel.labToken,
                         status: viewModel.currentStatus,
                         estimatedTime: viewModel.estimatedReadyTime,
                         isCompleted: viewModel.isCompleted
@@ -69,12 +83,12 @@ struct PharmacyView: View {
                     .padding(.top, 20)
                     .padding(.bottom, 20)
                     
-                    // MARK: - Complete Pharmacy Button
+                    // MARK: - Complete Lab Button
                     Button(action: {
-                        viewModel.completePharmacy()
+                        viewModel.completeLab()
                         navigateToHome = true
                     }) {
-                        Text("Complete Pharmacy")
+                        Text("Complete Labortary")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -108,11 +122,8 @@ struct PharmacyView: View {
                             )
                     }
                     .padding(.horizontal, 50)
-                    //.padding(.top, 5)
-                    
-                    //----
                 }
-            //}
+            }
             
             // MARK: - Back Button (Top Left)
             VStack {
@@ -168,12 +179,12 @@ struct PharmacyView: View {
 //                .shadow(color: .black.opacity(0.15), radius: 10)
 //        }
         .navigationBarHidden(true)
-        .alert("Medicines Ready!", isPresented: $viewModel.showCompletedAlert) {
+        .alert("Report is Ready!", isPresented: $viewModel.showCompletedAlert) {
             Button("OK", role: .none) {
                 viewModel.showCompletedAlert = false
             }
         } message: {
-            Text("Your medicines are ready to collect!")
+            Text("Your lab report is ready to collect!")
         }
         .navigationDestination(isPresented: $navigateToHome) {
             HomeView()
@@ -182,6 +193,6 @@ struct PharmacyView: View {
 }
 
 #Preview {
-    PharmacyView()
+    LabView()
         //.environmentObject(TabBarManager())
 }

@@ -12,8 +12,10 @@ struct HomeView: View {
     @State private var showNotifications = false
     @State private var goToConsultation = false
     
-    @State private var goToAppointment = false //onPharmacyTap()
+    @State private var goToAppointment = false
     @State private var goToPharmacy = false
+    @State private var goToLab = false
+    @State private var goToEmergencyLab = false
     
     
     var body: some View {
@@ -51,6 +53,12 @@ struct HomeView: View {
                         },
                         onPharmacyTap: {
                             goToPharmacy = true
+                        },
+                        onLabTap: {
+                            goToLab = true
+                        },
+                        onEmergencyLabTap: {
+                            goToEmergencyLab = true
                         }
                     )
                     .padding(.top, 20)
@@ -112,6 +120,17 @@ struct HomeView: View {
                     .padding(.top, 16)
                     .padding(.bottom, 60)
                 }
+                
+                // MARK: - Notification Button (Top Right)
+                VStack {
+                    HStack {
+                        Spacer()
+                        NotificationButton()
+                            .padding(.trailing, 0)
+                            .padding(.top, 0)
+                    }
+                    Spacer()
+                }
             }
             .navigationDestination(isPresented: $goToConsultation) {
                 ConsultationView()
@@ -122,6 +141,12 @@ struct HomeView: View {
             }
             .navigationDestination(isPresented: $goToPharmacy) {
                 PharmacyView()
+            }
+            .navigationDestination(isPresented: $goToLab) {
+                LabView()
+            }
+            .navigationDestination(isPresented: $goToEmergencyLab) {
+                EmergencyLabView()
             }
             
             // MARK: Notification button

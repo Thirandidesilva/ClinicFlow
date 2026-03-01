@@ -1,13 +1,13 @@
 //
-//  PharmacyTokenCard.swift
+//  LabTokenCard.swift
 //  ClinicFlow
 //
-//  Created by M H T U De Silva on 2026-02-28.
+//  Created by M H T U De Silva on 2026-03-01.
 //
 
 import SwiftUI
 
-struct PharmacyTokenCard: View {
+struct LabTokenCard: View {
     let token: String
     let status: String
     let estimatedTime: String
@@ -15,7 +15,7 @@ struct PharmacyTokenCard: View {
     
     var body: some View {
         VStack(spacing: 16) {
-            Text("Your Pharmacy Token")
+            Text("Your Labortary Token")
                 .font(.system(size: 18, weight: .bold))
                 .foregroundColor(.black)
             
@@ -64,40 +64,42 @@ struct PharmacyTokenCard: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(Color(hex: "F5F5F5"))
         )
-        .shadow(color: Color(hex: "0930A6").opacity(0.25), radius: 50, x: 1, y: 1)
+        .shadow(color: Color(hex: "0930A6").opacity(0.25), radius: 15, x: 1, y: 1)
         .padding(.horizontal, 15)
         .padding(.horizontal, 24)
     }
     
     private var statusColor: Color {
-            switch status.lowercased() {
-            case "completed":
-                return Color.green
-            case "preparing", "processing":
-                return Color.orange
-            case "collecting":
-                return Color.blue
-            case "almost ready":
-                return Color(hex: "FFA500") // Orange
-            case "token received":
-                return Color.blue
-            default:
-                return Color.green
-            }
+        switch status.lowercased() {
+        case "completed":
+            return Color.green
+        case "token received":
+            return Color.blue
+        case "processing":
+            return Color.orange
+        case "collecting":
+            return Color.purple
+        case "preparing":
+            return Color.orange
+        case "almost ready":
+            return Color(hex: "FFA500") // Orange
+        default:
+            return Color.green
         }
+    }
 }
 
 #Preview {
     VStack(spacing: 20) {
-        PharmacyTokenCard(
-            token: "P-12",
+        LabTokenCard(
+            token: "L-32",
             status: "Preparing",
             estimatedTime: "1.30 PM",
             isCompleted: false
         )
         
-        PharmacyTokenCard(
-            token: "P-12",
+        LabTokenCard(
+            token: "L-32",
             status: "Completed",
             estimatedTime: "1.30 PM",
             isCompleted: true

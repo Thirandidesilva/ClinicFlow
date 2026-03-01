@@ -8,8 +8,13 @@
 import SwiftUI
 
 struct SpecialtyTabView: View {
-    @StateObject private var viewModel = SpecialtyTabViewModel()
+    @StateObject private var viewModel: SpecialtyTabViewModel
     @State private var showNotifications = false
+    @Environment(\.dismiss) var dismiss
+    
+    init(preselectedSpecialty: Specialty? = nil) {
+        _viewModel = StateObject(wrappedValue: SpecialtyTabViewModel(preselectedSpecialty: preselectedSpecialty))
+    }
     
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -17,11 +22,11 @@ struct SpecialtyTabView: View {
             
             VStack(spacing: 0) {
                 // MARK: - Header
-                VStack(alignment: .leading, spacing: 24) {
-                    Text("Find Your Specialist")
-                        .font(.system(size: 28, weight: .bold))
+                VStack(alignment: .leading, spacing: 20) {
+                    Text("Hi, Let's find Your Specialist")
+                        .font(.system(size: 24, weight: .bold))
                         .foregroundColor(.black)
-                        .padding(.horizontal, 24)
+                        .padding(.horizontal, 30)
                         .padding(.top, 60)
                     
                     // MARK: - Specialty Chips (Horizontal Scrollable Tabs)
@@ -79,6 +84,30 @@ struct SpecialtyTabView: View {
                     .padding(.top, 20)
                     .padding(.bottom, 120)
                 }
+            }
+            
+            // MARK: - Back Button (Top Left)
+            VStack {
+                HStack {
+                    Button(action: {
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                            .frame(width: 40, height: 40)
+                            .background(
+                                Circle()
+                                    .fill(Color.white)
+                                    .shadow(color: .black.opacity(0.1), radius: 4)
+                            )
+                    }
+                    .padding(.leading, 24)
+                    .padding(.top, 0)
+                    
+                    Spacer()
+                }
+                Spacer()
             }
             
             // MARK: - Notification Button

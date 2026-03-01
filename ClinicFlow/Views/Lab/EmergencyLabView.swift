@@ -1,14 +1,14 @@
 //
-//  PharmacyView.swift
+//  EmergencyLabView.swift
 //  ClinicFlow
 //
-//  Created by M H T U De Silva on 2026-02-27.
+//  Created by M H T U De Silva on 2026-03-01.
 //
 
 import SwiftUI
 
-struct PharmacyView: View {
-    @StateObject private var viewModel = PharmacyViewModel()
+struct EmergencyLabView: View {
+    @StateObject private var viewModel = LabViewModel()
     @Environment(\.dismiss) var dismiss
     //@EnvironmentObject var tabManager: TabBarManager
     @State private var navigateToHome = false
@@ -17,23 +17,28 @@ struct PharmacyView: View {
         ZStack {
             Color.white.ignoresSafeArea()
             
-            //ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
+            // ScrollView(.vertical, showsIndicators: false) {
+                VStack(alignment: .leading, spacing: 30) {
                     
                     // MARK: - Header
                     VStack(alignment: .leading, spacing: 4) {
+                        
                         Text("Your Queue Status")
                             .font(.system(size: 14))
                             .foregroundColor(.gray)
                         
-                        Text("PHARMACY")
-                            .font(.system(size: 24, weight: .bold))
+                        Text("EMERGENCY LAB") //LABORTARY
+                            .font(.system(size: 20, weight: .bold))
                             .foregroundColor(.black)
+                        
+                        
                     }
                     .frame(maxWidth: .infinity, alignment: .leading)
                     .padding(.horizontal, 24)
-                    .padding(.top, 0)
-                    .padding(.leading, 55)
+                    .padding(.top, 7)
+                    .padding(.leading, 70)
+                    
+                    ScrollView(.vertical, showsIndicators: false) {
                     
                     // MARK: - Notification Message
                     HStack(spacing: 10) {
@@ -42,7 +47,7 @@ struct PharmacyView: View {
                             .foregroundColor(Color(hex: "0930A6").opacity(0.8))
                             
                         
-                        Text("You will receive an automatic notification when your turn is approaching")
+                        Text("You will receive an automatic notification when your report is ready.")
                             .font(.system(size: 16))
                             .foregroundColor(Color(hex: "0930A6").opacity(0.8))
                             .fixedSize(horizontal: false, vertical: true)
@@ -53,28 +58,38 @@ struct PharmacyView: View {
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(.gray.opacity(0.2), lineWidth: 1)
                     )
-                    .padding(.horizontal, 20)
+                    .padding(.horizontal, 35)
                     .padding(.top, 10)
                     
-                    // MARK: - Pharmacy Progress Steps
-                    PharmacyProgressSteps(steps: viewModel.steps)
+                    // MARK: - Lab Progress Steps
+                    EmergencyProcessCard(steps: viewModel.steps)
+                            .padding(.top, 10)
                     
-                    // MARK: - Pharmacy Token Card
-                    PharmacyTokenCard(
-                        token: viewModel.pharmacyToken,
+                    // MARK: - Lab Token Card
+                    EmergencyTokenCard(
+                        token: viewModel.emergencyLabToken,
                         status: viewModel.currentStatus,
                         estimatedTime: viewModel.estimatedReadyTime,
                         isCompleted: viewModel.isCompleted
                     )
-                    .padding(.top, 20)
-                    .padding(.bottom, 20)
+                    .padding(.top, 30)
+                    .padding(.bottom, 30)
                     
-                    // MARK: - Complete Pharmacy Button
+                    // MARK: - Request Info
+                    RequestInfoCard(
+                        reasonTitle: "REASON FOR EMERGENCY",
+                        reasonDescription: "Suspected acute infection - rapid CBC required",
+                        departmentTitle: "DEPARTMENT/WARD",
+                        departmentName: "Internal Medicine — Ward 3B"
+                    )
+                    .padding(.horizontal, 30)
+                    
+                    // MARK: - Complete Lab Button
                     Button(action: {
-                        viewModel.completePharmacy()
+                        viewModel.completeLab()
                         navigateToHome = true
                     }) {
-                        Text("Complete Pharmacy")
+                        Text("Mark Emergency Lab Complete")
                             .font(.system(size: 14, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
@@ -82,37 +97,15 @@ struct PharmacyView: View {
                             //.padding(.horizontal, 60)
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
-                                    .fill(viewModel.isCompleted ? Color(hex: "0930A6") : Color.gray.opacity(0.3))
+                                    .fill(viewModel.isCompleted ? Color(hex: "E01F20") : Color.gray.opacity(0.3))
                             )
                     }
                     .disabled(!viewModel.isCompleted)
                     .padding(.horizontal, 50)
-                    .padding(.top, 20)
-                    
-                    // MARK: - Cancel Button
-                    Button(action: {
-                        viewModel.requestCancelToken()
-                    }) {
-                        Text("Cancel Token")
-                            .font(.system(size: 14, weight: .semibold))
-                            .foregroundColor(Color(hex: "E01F20"))
-                            .frame(maxWidth: .infinity)
-                            .padding(.vertical, 16)
-                            .background(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .fill( Color.white)
-                            )
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 30)
-                                    .stroke(Color(hex: "E01F20"), lineWidth: 2)
-                            )
-                    }
-                    .padding(.horizontal, 50)
-                    //.padding(.top, 5)
-                    
-                    //----
+                    .padding(.top, 50)
+                    .padding(.bottom, 60)
                 }
-            //}
+            }
             
             // MARK: - Back Button (Top Left)
             VStack {
@@ -130,8 +123,8 @@ struct PharmacyView: View {
                                     .shadow(color: .black.opacity(0.1), radius: 4)
                             )
                     }
-                    .padding(.leading, 24)
-                    .padding(.top, 0)
+                    .padding(.leading, 35)
+                    .padding(.top, 10)
                     
                     Spacer()
                 }
@@ -143,45 +136,32 @@ struct PharmacyView: View {
                 HStack {
                     Spacer()
                     NotificationButton()
-                        .padding(.trailing, 0)
-                        .padding(.top, 0)
+                        .padding(.trailing, 10)
+                        .padding(.top, 10)
                 }
                 Spacer()
             }
-            
-            // MARK: - Cancel Token Popup
-            if viewModel.showCancelPopup {
-                CancelTokenPopup(
-                    onCancel: {
-                        viewModel.cancelToken()
-                        navigateToHome = true
-                    },
-                    onDismiss: {
-                        viewModel.showCancelPopup = false
-                    }
-                )
-            }
         }
-//        .overlay(alignment: .bottom) {
-//            CustomTabBar(activeTab: $tabManager.activeTab)
-//                .padding(.bottom, -20)
-//                .shadow(color: .black.opacity(0.15), radius: 10)
-//        }
+
         .navigationBarHidden(true)
-        .alert("Medicines Ready!", isPresented: $viewModel.showCompletedAlert) {
+        
+        // MARK: - Alert - Report Ready
+        .alert("Report is Ready!", isPresented: $viewModel.showCompletedAlert) {
             Button("OK", role: .none) {
                 viewModel.showCompletedAlert = false
             }
         } message: {
-            Text("Your medicines are ready to collect!")
+            Text("Your Emeregency lab report is ready to collect!")
         }
         .navigationDestination(isPresented: $navigateToHome) {
             HomeView()
         }
+        .padding(.horizontal,24)
     }
+        //.padding(.top, 20)
 }
 
 #Preview {
-    PharmacyView()
+    EmergencyLabView()
         //.environmentObject(TabBarManager())
 }
