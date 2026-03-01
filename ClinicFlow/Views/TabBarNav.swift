@@ -18,7 +18,7 @@ struct TabBarNav: View {
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
                 Tab(value: .location) {
-                    Text("Map")
+                    MapView()
                         .toolbarVisibility(.hidden, for: .tabBar)
                 }
                 Tab(value: .activity) {
