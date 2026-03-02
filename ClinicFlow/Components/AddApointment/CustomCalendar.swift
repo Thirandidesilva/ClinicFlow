@@ -1,5 +1,5 @@
 //
-//  Calendar.swift
+//  CustomCalendar.swift
 //  ClinicFlow
 //
 //  Created by M H T U De Silva on 2026-03-01.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CustomCalendarView: View {
+struct CustomCalendar: View {
     @State private var selectedDate = Date()
     @State private var currentMonth = Date()
     
@@ -20,49 +20,51 @@ struct CustomCalendarView: View {
             HStack {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(Color(hex: "1E3A8A"))
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.gray)
                 }
                 
                 Spacer()
                 
                 Text(monthYearString)
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(Color(hex: "1E3A8A"))
+                    .font(.system(size: 14, weight: .semibold))
+                    .foregroundColor(.black.opacity(0.7))
                 
                 Spacer()
                 
                 Button(action: nextMonth) {
                     Image(systemName: "chevron.right")
-                        .font(.system(size: 18, weight: .semibold))
-                        .foregroundColor(Color(hex: "1E3A8A"))
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundColor(.gray) //Color(hex: "1E3A8A")
                 }
             }
             .frame(height: 40)
-            .padding(.horizontal, 20)
+            .padding(.horizontal, 30)
             
             // MARK: - Divider
             Rectangle()
                 .fill(Color.gray.opacity(0.2))
                 .frame(height: 1)
                 .padding(.horizontal, 20)
-                .padding(.vertical, 12)
+                .padding(.vertical, 6)
             
             // MARK: - Days of Week
             HStack(spacing: 0) {
                 ForEach(daysOfWeek, id: \.self) { day in
                     Text(day)
-                        .font(.system(size: 12, weight: .medium))
+                        .font(.system(size: 10, weight: .medium))
                         .foregroundColor(.gray)
                         .frame(maxWidth: .infinity)
                 }
             }
             .frame(height: 25)
             .padding(.horizontal, 20)
+            .padding(.vertical, 10)
             
             // MARK: - Calendar Grid
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 12) {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 0), count: 7), spacing: 0) {
                 ForEach(daysInMonth, id: \.self) { day in
+                    
                     if day > 0 {
                         DayCell(
                             day: day,
@@ -74,13 +76,14 @@ struct CustomCalendarView: View {
                         }
                     } else {
                         Text("")
-                            .frame(width: 38, height: 38)
+                            .frame(width: 30, height: 30)
+                            .font(.system(size: 12, weight: .medium))
                     }
                 }
             }
-            .frame(height: 260)
+            .frame(height: 150)
             .padding(.horizontal, 20)
-            .padding(.top, 12)
+            .padding(.vertical, 28)
             
             Spacer()
         }
@@ -90,7 +93,7 @@ struct CustomCalendarView: View {
                 .fill(Color.white)
                 .shadow(color: .black.opacity(0.1), radius: 15, x: 0, y: 8)
         )
-        .frame(width: 340, height: 420)
+        .frame(width: 310, height: 300)
         .fixedSize()
         .padding(.horizontal, 20)
     }
@@ -180,10 +183,11 @@ struct DayCell: View {
             }
             
             Text("\(day)")
-                .font(.system(size: 16, weight: isSelected || isToday ? .bold : .regular))
-                .foregroundColor(isSelected ? .white : Color(hex: "1E3A8A"))
+                .font(.system(size: 13.5, weight: isSelected || isToday ? .bold : .semibold))
+                .foregroundColor(isSelected ? .white : Color.black.opacity(0.69))
         }
         .frame(height: 38)
+        .padding(.vertical, 0)
     }
 }
 
@@ -192,6 +196,6 @@ struct DayCell: View {
         Color.gray.opacity(0.1)
             .ignoresSafeArea()
         
-        CustomCalendarView()
+        CustomCalendar()
     }
 }

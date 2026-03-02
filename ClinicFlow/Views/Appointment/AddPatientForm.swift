@@ -34,6 +34,7 @@ struct AddPatientView: View {
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.black)
                             .padding(.top, 20)
+                            .padding(.leading, 5)
                         
                         FormSectionCard {
                             FormInputField(
@@ -59,16 +60,17 @@ struct AddPatientView: View {
                                 options: viewModel.genderOptions
                             )
                         }
-                        .padding(.top, 10)
+                        .padding(.top, 0)
                     }
                     .padding(.horizontal, 25)
                     
                     // MARK: - Contact Information
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 15) {
                         Text("Contact Information")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.black)
-                            .padding(.top, 5)
+                            .padding(.top, 20)
+                            .padding(.leading, 5)
                         
                         FormSectionCard {
                             FormInputField(
@@ -86,17 +88,17 @@ struct AddPatientView: View {
                                 text: $viewModel.address
                             )
                         }
-                        .padding(.top, 5)
+                        .padding(.top, 0)
                     }
                     .padding(.horizontal, 25)
                     
                     // MARK: - Vitals
-                    VStack(alignment: .leading, spacing: 12) {
+                    VStack(alignment: .leading, spacing: 15) {
                         Text("Vitals")
                             .font(.system(size: 18, weight: .semibold))
                             .foregroundColor(.black)
                             .padding(.top, 15)
-                            .padding(.leading, 16)
+                            .padding(.leading, 5)
                         
                         FormSectionCard {
                             FormPickerField(
@@ -160,6 +162,8 @@ struct AddPatientView: View {
                             )
                     )
                     .padding(.horizontal, 24)
+                    .padding(.top, 20)
+                    .padding(.bottom, 16)
                     
                     // MARK: - Buttons
                     VStack(spacing: 16) {
@@ -198,11 +202,11 @@ struct AddPatientView: View {
                     }
                     .padding(.horizontal, 40)
                     .padding(.top, 16)
-                    .padding(.bottom, 140)
+                    .padding(.bottom, 60)
                 }
             }
             
-            // MARK: - Back Button (Top Left)
+            // MARK: - Back Button
             VStack {
                 HStack {
                     Button(action: {
@@ -226,7 +230,7 @@ struct AddPatientView: View {
                 Spacer()
             }
             
-            // MARK: - Notification Button (Top Right)
+            // MARK: - Notification Button
             VStack {
                 HStack {
                     Spacer()
