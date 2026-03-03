@@ -41,7 +41,7 @@ struct EditPhoneView: View {
                     .font(.body)
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 36)
 
                 // MARK: Phone Number Field
                 VStack(alignment: .leading, spacing: 8) {
@@ -62,7 +62,7 @@ struct EditPhoneView: View {
                         .cornerRadius(10)
                         .padding(.horizontal, 24)
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 100)
 
                 // MARK: Update Button
                 Button(action: {

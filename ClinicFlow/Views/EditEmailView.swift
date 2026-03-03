@@ -41,7 +41,7 @@ struct EditEmailView: View {
                     .font(.body)
                     .foregroundColor(.secondary)
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 32)
+                    .padding(.bottom, 36)
 
                 // MARK: Email Field
                 VStack(alignment: .leading, spacing: 8) {
@@ -63,7 +63,7 @@ struct EditEmailView: View {
                         .cornerRadius(10)
                         .padding(.horizontal, 24)
                 }
-                .padding(.bottom, 40)
+                .padding(.bottom, 100)
 
                 // MARK: Update Button
                 Button(action: {
