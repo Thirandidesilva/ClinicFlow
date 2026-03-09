@@ -45,13 +45,13 @@ struct EditRecordView: View {
                     // MARK: Patient Card
                     HStack(spacing: 14) {
                         Circle()
-                            .fill(Color(hex: "1A1AE6"))
+                            .fill(Color.white)
                             .frame(width: 46, height: 46)
                             .overlay(
                                 Text(String(viewModel.fullName.prefix(1)))
                                     .font(.title3)
                                     .fontWeight(.bold)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Color(hex: "1A1AE6"))
                             )
                         VStack(alignment: .leading, spacing: 3) {
                             Text(viewModel.fullName)
