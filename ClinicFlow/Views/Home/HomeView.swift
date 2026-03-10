@@ -9,6 +9,8 @@ import SwiftUI
 
 struct HomeView: View {
     
+    @EnvironmentObject var tabManager: TabBarViewModel
+    
     @State private var showNotifications = false
     @State private var goToConsultation = false
     
@@ -17,6 +19,7 @@ struct HomeView: View {
     @State private var goToLab = false
     @State private var goToEmergencyLab = false
     
+    @State private var showCheckInPopup = false
     
     var body: some View {
         ZStack {
@@ -36,7 +39,7 @@ struct HomeView: View {
                         .foregroundColor(.gray)
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.horizontal, 24)
+                .padding(.horizontal, 30)
                 .padding(.top, 10)
                 .padding(.bottom, 16)
                 .background(Color.white)
@@ -48,7 +51,8 @@ struct HomeView: View {
                         Text("What would you like to do today?")
                             .font(.title2)
                             .fontWeight(.semibold)
-                            .padding(.leading, 24)
+                            .padding(.leading, 30)
+                            .padding(.top, 10)
                         
                         // MARK: - Service Grid
                         ServiceGrid(
@@ -66,23 +70,26 @@ struct HomeView: View {
                             }
                         )
                         .padding(.horizontal, 24)
+                        .padding(.top, 0)
                         
                         // MARK: - Visit Journey
-                        Text("Visit Journey")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 24)
+//                        Text("Visit Journey")
+//                            .font(.system(size: 18, weight: .medium))
+//                            .padding(.leading, 30)
+//                            .padding(.top, 20)
                         
-                        VisitJoourney(
-                            steps: ["Checkin", "Consultation", "Pharmacy", "Lab"],
+                        VisitJourney(
+                            steps: ["CheckIn", "Consultation", "Pharmacy", "Lab"],
                             currentStep: 1
                         )
+                        .padding(.horizontal, 0)
+                        .padding(.top, 20)
                         
                         // MARK: - Upcoming Appointment
                         Text("Upcoming Appointment")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 24)
+                            .font(.system(size: 18, weight: .medium))
+                            .padding(.leading, 30)
+                            .padding(.top, 20)
                         
                         UpcomingDrCard(
                             date: "1st of March 2026",
@@ -93,14 +100,16 @@ struct HomeView: View {
                             rating: 5.0,
                             reviewCount: 156
                         ) {
-                            goToConsultation = true
+                            tabManager.isTabBarHidden = true
+                            showCheckInPopup = true
                         }
+                        .padding(.top, -5)
                         
                         // MARK: - Top Doctors
                         Text("Top Doctors")
-                            .font(.title3)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 24)
+                            .font(.system(size: 18, weight: .medium))
+                            .padding(.leading, 30)
+                            .padding(.top, 20)
                         
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(spacing: 16) {
@@ -130,13 +139,32 @@ struct HomeView: View {
                 EmergencyLabView()
             }
             
+            // MARK: - CheckIn Confirm Popup
+            if showCheckInPopup {
+                CheckInConfirmationPopup(
+                    date: "1st of March 2026",
+                    time: "1.30 PM",
+                    doctorName: "Elizabeth Blackwell",
+                    roomNumber: "F1-307",
+                    onCheckIn: {
+                        showCheckInPopup = false
+                        tabManager.isTabBarHidden = false
+                        goToConsultation = true
+                    },
+                    onCancel: {
+                        showCheckInPopup = false
+                        tabManager.isTabBarHidden = false
+                    }
+                )
+            }
+            
             // MARK: - Notification Button (Top Right)
             VStack {
                 HStack {
                     Spacer()
                     NotificationButton()
-                        .padding(.trailing, 10)
-                        .padding(.top, 10)
+                        .padding(.horizontal, 0)
+                        .padding(.top, 0)
                 }
                 Spacer()
             }
@@ -148,5 +176,6 @@ struct HomeView: View {
 #Preview {
     NavigationStack {
         HomeView()
+            .environmentObject(TabBarViewModel())
     }
 }

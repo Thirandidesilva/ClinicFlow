@@ -10,9 +10,8 @@ import SwiftUI
 struct BookAppointmentView: View {
     @StateObject private var viewModel: BookAppointmentViewModel
     @Environment(\.dismiss) var dismiss
-    //@EnvironmentObject var tabManager: TabBarManager
     @State private var showSuccessMessage = false
-    @State private var navigateToAddPatientForm = false
+    @State private var navigateToDetails = false
     
     init(doctor: Doctor) {
         _viewModel = StateObject(wrappedValue: BookAppointmentViewModel(doctor: doctor))
@@ -22,69 +21,68 @@ struct BookAppointmentView: View {
         ZStack {
             Color.white.ignoresSafeArea()
             
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    
-                    // MARK: - Header
-                    Text("Book Appointment")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 80)
-                        .padding(.top, 6)
+            VStack(alignment: .leading, spacing: 30) {
+                
+                // MARK: - Header
+                Text("Book Appointment")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 80)
+                    .padding(.top, 6)
+                
+                ScrollView(.vertical, showsIndicators: false) {
                     
                     // MARK: - Enter Patient Details
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Enter Patient Details")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.system(size: 16, weight: .regular))
                             .foregroundColor(.black)
                         
                         PatientDropdownField(
                             selectedPatient: $viewModel.selectedPatient,
-                            //showDropdown: $viewModel.showPatientDropdown,
                             patients: viewModel.patients,
                             onAddNewPatient: {
                                 viewModel.addNewPatient()
                             }
                         )
-                        .padding(.top, 10)
-                        .padding(.horizontal, -4)
                     }
                     .padding(.horizontal, 30)
-                    .padding(.top, 30)
+                    .padding(.top, 25)
                     
                     // MARK: - Select Date
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Select Date")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.system(size: 16, weight: .regular))
                             .foregroundColor(.black)
-                            .padding(.horizontal, 24)
+                            .padding(.horizontal, 30)
                             .padding(.top, 30)
                         
                         CustomCalendar()
-                            .padding(.top, 20)
-                            .padding(.horizontal, 24)
+                            .frame(maxWidth: .infinity)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                     
                     // MARK: - Select Time
                     VStack(alignment: .leading, spacing: 12) {
                         Text("Select Time")
-                            .font(.system(size: 16, weight: .semibold))
+                            .font(.system(size: 16, weight: .regular))
                             .foregroundColor(.black)
+                            .padding(.top, 30)
+                            .padding(.horizontal, 30)
                         
                         SelectTimeCard(selectedTime: $viewModel.selectedTime)
                     }
-                    .padding(.horizontal, 24)
                     
-                    // MARK: - Buttons
+                    // MARK: - Book Appointment Button
                     VStack(spacing: 16) {
                         Button(action: {
-                            viewModel.bookAppointment()
                             if viewModel.validateBooking() {
+                                viewModel.bookAppointment()
                                 showSuccessMessage = true
                             }
                         }) {
                             Text("Book Appointment")
-                                .font(.system(size: 18, weight: .semibold))
+                                .font(.system(size: 16, weight: .semibold))
                                 .foregroundColor(.white)
                                 .frame(maxWidth: .infinity)
                                 .padding(.vertical, 16)
@@ -93,28 +91,10 @@ struct BookAppointmentView: View {
                                         .fill(Color(hex: "0930A6"))
                                 )
                         }
-                        
-//                        Button(action: {
-//                            dismiss()
-//                        }) {
-//                            Text("Cancel")
-//                                .font(.system(size: 18, weight: .semibold))
-//                                .foregroundColor(Color(hex: "0930A6"))
-//                                .frame(maxWidth: .infinity)
-//                                .padding(.vertical, 16)
-//                                .background(
-//                                    RoundedRectangle(cornerRadius: 30)
-//                                        .stroke(Color(hex: "0930A6"), lineWidth: 2)
-//                                        .background(
-//                                            RoundedRectangle(cornerRadius: 30)
-//                                                .fill(Color.white)
-//                                        )
-//                                )
-//                        }
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 16)
-                    .padding(.bottom, 140)
+                    .padding(.horizontal, 40)
+                    .padding(.top, 60)
+                    .padding(.bottom, 60)
                 }
             }
             
@@ -153,11 +133,6 @@ struct BookAppointmentView: View {
                 Spacer()
             }
         }
-//        .overlay(alignment: .bottom) {
-//            CustomTabBar(activeTab: $tabManager.activeTab)
-//                .padding(.bottom, -20)
-//                .shadow(color: .black.opacity(0.15), radius: 10)
-//        }
         .navigationBarHidden(true)
         .alert("Error", isPresented: $viewModel.showValidationError) {
             Button("OK", role: .cancel) {}
@@ -166,13 +141,31 @@ struct BookAppointmentView: View {
         }
         .alert("Success", isPresented: $showSuccessMessage) {
             Button("OK", role: .none) {
-                dismiss()
+                navigateToDetails = true
             }
         } message: {
             Text("Appointment booked successfully!")
         }
         .navigationDestination(isPresented: $viewModel.navigateToAddPatient) {
-            AddPatientView()
+            AddPatientView(
+                onPatientAdded: { newPatient in
+                    viewModel.patients.append(newPatient)
+                    viewModel.selectedPatient = newPatient
+                },
+                doctor: viewModel.doctor
+            )
+        }
+        .navigationDestination(isPresented: $navigateToDetails) {
+            AppointmentDetailsView(booking: AppointmentBooking(
+                appointmentNumber: "#\(Int.random(in: 10...99))",
+                doctor: viewModel.doctor,
+                patient: viewModel.selectedPatient ?? Patient.samplePatients[0],
+                date: Date(),
+                time: viewModel.selectedTime,
+                estimatedTime: "01.30 PM",
+                doctorArrivalTime: "10.30 AM",
+                roomNumber: "F1-307"
+            ))
         }
     }
 }

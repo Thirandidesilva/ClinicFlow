@@ -53,7 +53,7 @@ struct SpecialtyChip: View {
     var body: some View {
         Button(action: onTap) {
             Text(specialty.name)
-                .font(.system(size: 14, weight: .medium))
+                .font(.system(size: 14, weight: .regular))
                 .foregroundColor(isSelected ? .white : .black)
                 .padding(.horizontal, 20)
                 .padding(.vertical, 12)
@@ -63,7 +63,7 @@ struct SpecialtyChip: View {
                 )
                 .overlay(
                     Capsule()
-                        .stroke(Color(hex: "0930A6"), lineWidth: isSelected ? 0 : 1)
+                        .strokeBorder(Color(hex: "0930A6"), lineWidth: isSelected ? 0 : 1)
                 )
         }
         .buttonStyle(.plain)

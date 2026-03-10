@@ -20,7 +20,7 @@ struct CustomCalendar: View {
             HStack {
                 Button(action: previousMonth) {
                     Image(systemName: "chevron.left")
-                        .font(.system(size: 10, weight: .semibold))
+                        .font(.system(size: 14, weight: .semibold))
                         .foregroundColor(.gray)
                 }
                 
@@ -93,9 +93,10 @@ struct CustomCalendar: View {
                 .fill(Color.white)
                 .shadow(color: .black.opacity(0.1), radius: 15, x: 0, y: 8)
         )
-        .frame(width: 310, height: 300)
-        .fixedSize()
-        .padding(.horizontal, 20)
+        
+        .frame(maxWidth: .infinity)
+        .fixedSize(horizontal: false, vertical: true)
+        .padding(.horizontal, 40)
     }
     
     // MARK: - Helper Functions

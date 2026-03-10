@@ -9,50 +9,55 @@ import SwiftUI
 
 struct ConsultationView: View {
     @StateObject private var viewModel = ConsultationViewModel()
-    //@Environment(\.dismiss) var dismiss
-    //@EnvironmentObject var tabManager: TabBarManager
+    @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var tabManager: TabBarViewModel
+    
+    var onComplete: (() -> Void)? = nil
+    @State private var navigateToHome = false
     
     var body: some View {
-        ZStack(alignment: .topLeading) {
+        ZStack {
             Color.white.ignoresSafeArea()
             
-            // MARK: - Header Title
-            VStack(alignment: .leading, spacing: 4) {
-                Text("Your Queue Status")
-                    .font(.system(size: 14))
-                    .foregroundColor(.gray)
+            VStack(alignment: .leading, spacing: 24) {
                 
-                Text("CONSULTATION")
-                    .font(.system(size: 20, weight: .bold))
-                    .foregroundColor(.black)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, 24)
-            .padding(.top, 20)
-            .padding(.bottom, 20)
-            
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
+                // MARK: - Header
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Your Queue Status")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
+                    
+                    Text("CONSULTATION")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.black)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 0)
+                .padding(.leading, 55)
+                
+                ScrollView(.vertical, showsIndicators: false) {
                     
                     // MARK: - Notification Message
                     HStack(spacing: 10) {
                         Image(systemName: "bell.fill")
                             .font(.system(size: 16))
-                            .foregroundColor(Color(hex: "0930A6"))
+                            .foregroundColor(Color(hex: "0930A6").opacity(0.8))
                             
                         
                         Text("You will receive an automatic notification when your turn is approaching")
                             .font(.system(size: 16))
-                            .foregroundColor(Color(hex: "0930A6"))
+                            .foregroundColor(Color(hex: "0930A6").opacity(0.8))
                             .fixedSize(horizontal: false, vertical: true)
                     }
                     .padding(16)
+                    .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(Color(hex: "0930A6").opacity(0.2), lineWidth: 1)
+                            .stroke(.gray.opacity(0.2), lineWidth: 1)
                     )
-                    .padding(.horizontal, 15)
-                    .padding(.top, 90)
+                    .padding(.horizontal, 20)
+                    .padding(.top, 10)
                     
                     // MARK: - Queue Number Token
                     VStack(spacing: 16) {
@@ -82,12 +87,10 @@ struct ConsultationView: View {
                     }
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, 24)
-                    .background(
-                        RoundedRectangle(cornerRadius: 16)
-                            .fill(Color(hex: "FFFFFF"))
-                    )
                     .padding(.horizontal, 24)
-                    
+                    .padding(.top, 10)
+                    .padding(.bottom, 30)
+
                     // MARK: - Queue Progress Card
                     QueueProgressCard(
                         queueItems: viewModel.queueItems,
@@ -97,24 +100,48 @@ struct ConsultationView: View {
                     
                     // MARK: - Complete Session Button
                     Button(action: {
-                        viewModel.completeSession()
-                        // Navigate back to HomeView
-                        //dismiss()
+                        navigateToHome = true
                     }) {
                         Text("Complete Session")
-                            .font(.system(size: 18, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
-                                    .fill(Color(hex: "0930A6"))
+                                    .fill(viewModel.isMyTurnCompleted ? Color(hex: "0930A6") : Color.gray.opacity(0.3))
                             )
                     }
-                    .padding(.horizontal, 24)
-                    .padding(.top, 20)
-                    .padding(.bottom, 140)
+                    .disabled(!viewModel.isMyTurnCompleted)
+                    .padding(.horizontal, 40)
+                    .padding(.top, 60)
+                    .padding(.bottom, 60)
                 }
+            }
+            
+            // MARK: - Back Button (Top Left)
+            VStack {
+                HStack {
+                    Button(action: {
+                        tabManager.activeTab = .home
+                        dismiss()
+                    }) {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 20, weight: .semibold))
+                            .foregroundColor(.black)
+                            .frame(width: 40, height: 40)
+                            .background(
+                                Circle()
+                                    .fill(Color.white)
+                                    .shadow(color: .black.opacity(0.1), radius: 4)
+                            )
+                    }
+                    .padding(.leading, 30)
+                    .padding(.top, 0)
+                    
+                    Spacer()
+                }
+                Spacer()
             }
             
             // MARK: - Notification Button (Top Right)
@@ -123,12 +150,29 @@ struct ConsultationView: View {
                     Spacer()
                     NotificationButton()
                         .padding(.trailing, 0)
-                        .padding(.top, 10)
+                        .padding(.top, 0)
                 }
                 Spacer()
             }
         }
         .navigationBarHidden(true)
+        
+//        NavigationLink(destination: ConsultationView(onComplete: {
+//            navigationPath = NavigationPath()  // ← clears entire stack back to root
+//        }))
+        
+        .navigationDestination(isPresented: $navigateToHome) {
+            HomeView()
+        }
+        
+        .onAppear {
+                    tabManager.activeTab = .none                   // 👈 deselect tabs
+                    tabManager.dismissSecondaryPage = { dismiss() } // 👈 register dismiss
+                }
+                .onDisappear {
+                    tabManager.dismissSecondaryPage = nil           // 👈 clean up
+                }
+        
         .alert(isPresented: $viewModel.showAlert) {
             Alert(
                 title: Text("Queue Update"),
@@ -136,13 +180,11 @@ struct ConsultationView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
-        .navigationDestination(isPresented: $viewModel.showReviewPage) {
-            ReviewView()
-        }
+//        }
     }
 }
 
 #Preview {
     ConsultationView()
-        //.environmentObject(TabBarManager())
+        .environmentObject(TabBarViewModel())
 }

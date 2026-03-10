@@ -10,42 +10,37 @@ import SwiftUI
 struct EmergencyLabView: View {
     @StateObject private var viewModel = LabViewModel()
     @Environment(\.dismiss) var dismiss
-    //@EnvironmentObject var tabManager: TabBarManager
-    @State private var navigateToHome = false
+    @EnvironmentObject var tabManager: TabBarViewModel
     
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
             
-            // ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 30) {
+            VStack(alignment: .leading, spacing: 30) {
+                
+                // MARK: - Header
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Your Queue Status")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
                     
-                    // MARK: - Header
-                    VStack(alignment: .leading, spacing: 4) {
-                        
-                        Text("Your Queue Status")
-                            .font(.system(size: 14))
-                            .foregroundColor(.gray)
-                        
-                        Text("EMERGENCY LAB") //LABORTARY
-                            .font(.system(size: 20, weight: .bold))
-                            .foregroundColor(.black)
-                        
-                        
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 7)
-                    .padding(.leading, 70)
-                    
-                    ScrollView(.vertical, showsIndicators: false) {
+                    Text("EMERGENCY LAB")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundColor(.black)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 7)
+                .padding(.leading, 70)
+                
+                ScrollView(.vertical, showsIndicators: false) {
                     
                     // MARK: - Notification Message
+                    
                     HStack(spacing: 10) {
                         Image(systemName: "bell.fill")
                             .font(.system(size: 16))
                             .foregroundColor(Color(hex: "0930A6").opacity(0.8))
-                            
                         
                         Text("You will receive an automatic notification when your report is ready.")
                             .font(.system(size: 16))
@@ -61,11 +56,51 @@ struct EmergencyLabView: View {
                     .padding(.horizontal, 35)
                     .padding(.top, 10)
                     
+                    // MARK: - Emergency Banner
+                    
+                    HStack(alignment: .top, spacing: 12) {
+                        Image(systemName: "waveform.path.ecg")
+                            .font(.system(size: 14, weight: .semibold))
+                            .foregroundColor(Color(hex: "E01F20"))
+                            .padding(.top, 2)
+                        
+                        VStack(alignment: .leading, spacing: 8) {
+                            Group {
+                                Text("This emergency lab test has been ") +
+                                Text("requested by your doctor")
+                                    .fontWeight(.bold) +
+                                Text(".")
+                            }
+                            .font(.system(size: 14))
+                            .foregroundColor(Color(hex: "E01F20"))
+                            
+                            Text("Please proceed as directed by your care team.")
+                                .font(.system(size: 14))
+                                .foregroundColor(Color(hex: "E01F20"))
+                        }
+                    }
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 16)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(hex: "E01F20").opacity(0.06))
+                    )
+                    .overlay(alignment: .leading) {
+                        Rectangle()
+                            .fill(Color(hex: "E01F20"))
+                            .frame(width: 4)
+                            .cornerRadius(2)
+                    }
+                    .padding(.horizontal, 35)
+                    .padding(.top, 10)
+                    
                     // MARK: - Lab Progress Steps
+                    
                     EmergencyProcessCard(steps: viewModel.steps)
-                            .padding(.top, 10)
+                        .padding(.top, 10)
                     
                     // MARK: - Lab Token Card
+                    
                     EmergencyTokenCard(
                         token: viewModel.emergencyLabToken,
                         status: viewModel.currentStatus,
@@ -76,6 +111,7 @@ struct EmergencyLabView: View {
                     .padding(.bottom, 30)
                     
                     // MARK: - Request Info
+                    
                     RequestInfoCard(
                         reasonTitle: "REASON FOR EMERGENCY",
                         reasonDescription: "Suspected acute infection - rapid CBC required",
@@ -85,32 +121,35 @@ struct EmergencyLabView: View {
                     .padding(.horizontal, 30)
                     
                     // MARK: - Complete Lab Button
+                    
                     Button(action: {
                         viewModel.completeLab()
-                        navigateToHome = true
+                        tabManager.activeTab = .home
+                        dismiss()
                     }) {
                         Text("Mark Emergency Lab Complete")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            //.padding(.horizontal, 60)
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
                                     .fill(viewModel.isCompleted ? Color(hex: "E01F20") : Color.gray.opacity(0.3))
                             )
                     }
                     .disabled(!viewModel.isCompleted)
-                    .padding(.horizontal, 50)
+                    .padding(.horizontal, 40)
                     .padding(.top, 50)
                     .padding(.bottom, 60)
                 }
             }
             
-            // MARK: - Back Button (Top Left)
+            // MARK: - Back Button
+            
             VStack {
                 HStack {
                     Button(action: {
+                        tabManager.activeTab = .home
                         dismiss()
                     }) {
                         Image(systemName: "chevron.left")
@@ -131,7 +170,8 @@ struct EmergencyLabView: View {
                 Spacer()
             }
             
-            // MARK: - Notification Button (Top Right)
+            // MARK: - Notification Button
+            
             VStack {
                 HStack {
                     Spacer()
@@ -142,10 +182,14 @@ struct EmergencyLabView: View {
                 Spacer()
             }
         }
-
         .navigationBarHidden(true)
-        
-        // MARK: - Alert - Report Ready
+        .onAppear {
+            tabManager.activeTab = .none
+            tabManager.dismissSecondaryPage = { dismiss() }
+        }
+        .onDisappear {
+            tabManager.dismissSecondaryPage = nil
+        }
         .alert("Report is Ready!", isPresented: $viewModel.showCompletedAlert) {
             Button("OK", role: .none) {
                 viewModel.showCompletedAlert = false
@@ -153,15 +197,11 @@ struct EmergencyLabView: View {
         } message: {
             Text("Your Emeregency lab report is ready to collect!")
         }
-        .navigationDestination(isPresented: $navigateToHome) {
-            HomeView()
-        }
-        .padding(.horizontal,24)
+        .padding(.horizontal, 24)
     }
-        //.padding(.top, 20)
 }
 
 #Preview {
     EmergencyLabView()
-        //.environmentObject(TabBarManager())
+        .environmentObject(TabBarViewModel())
 }

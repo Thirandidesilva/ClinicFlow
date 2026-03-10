@@ -12,6 +12,11 @@ struct AddPatientView: View {
     @Environment(\.dismiss) var dismiss
     //@EnvironmentObject var tabManager: TabBarManager
     
+    var onPatientAdded: ((Patient) -> Void)?
+    var doctor: Doctor
+    @State private var navigateToBooking = false
+    @State private var newlyAddedPatient: Patient?
+    
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
@@ -165,11 +170,14 @@ struct AddPatientView: View {
                     .padding(.top, 20)
                     .padding(.bottom, 16)
                     
-                    // MARK: - Buttons
+                    // MARK: - Add Patient Button
                     VStack(spacing: 16) {
                         Button(action: {
-                            viewModel.addPatient()
-                            // Navigate or show success
+                            if let patient = viewModel.addPatient() {
+                                newlyAddedPatient = patient
+                                onPatientAdded?(patient)
+                                navigateToBooking = true
+                            }
                         }) {
                             Text("Add Patient")
                                 .font(.system(size: 18, weight: .semibold))
@@ -181,6 +189,8 @@ struct AddPatientView: View {
                                         .fill(Color(hex: "0930A6"))
                                 )
                         }
+                        
+                        // MARK: - Cancel Button
                         
                         Button(action: {
                             dismiss()
@@ -247,6 +257,11 @@ struct AddPatientView: View {
 //                .shadow(color: .black.opacity(0.15), radius: 10)
 //        }
         .navigationBarHidden(true)
+        
+        .navigationDestination(isPresented: $navigateToBooking) {
+            BookAppointmentView(doctor: doctor)
+        }
+        
         .alert("Error", isPresented: $viewModel.showValidationError) {
             Button("OK", role: .cancel) {}
         } message: {
@@ -256,6 +271,6 @@ struct AddPatientView: View {
 }
 
 #Preview {
-    AddPatientView()
+    AddPatientView(doctor: Doctor.sampleDoctors[0])
         //.environmentObject(TabBarManager())
 }

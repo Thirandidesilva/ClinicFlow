@@ -10,6 +10,9 @@ import SwiftUI
 struct AppointmentDetailsView: View {
     let booking: AppointmentBooking
     @Environment(\.dismiss) var dismiss
+    @State private var showCheckInPopup = false
+    @State private var goToConsultation = false
+    //@State private var showCheckInPopup = false
     //@EnvironmentObject var tabManager: TabBarManager
     
     var body: some View {
@@ -65,7 +68,7 @@ struct AppointmentDetailsView: View {
                     // MARK: - Appointment Number
                     HStack {
                         Text("Appointment Number")
-                            .font(.system(size: 16, weight: .medium))
+                            .font(.system(size: 16, weight: .regular))
                             .foregroundColor(.black)
                             
                         
@@ -106,6 +109,7 @@ struct AppointmentDetailsView: View {
                         Text("Patient Details")
                             .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.black)
+                            .padding(.top, 20)
                         
                         VStack(alignment: .leading, spacing: 0) {
                             InfoRow(label: "Patient Name", value: booking.patient.name)
@@ -129,7 +133,7 @@ struct AppointmentDetailsView: View {
                     // MARK: - Check In Button
                     Button(action: {
                         // Navigate to check-in or home
-                        dismiss()
+                        showCheckInPopup = true
                     }) {
                         Text("Check In")
                             .font(.system(size: 18, weight: .semibold))
@@ -142,9 +146,12 @@ struct AppointmentDetailsView: View {
                             )
                     }
                     .padding(.horizontal, 24)
-                    .padding(.top, 16)
+                    .padding(.top, 60)
                     .padding(.bottom, 60)
                 }
+                //MARK: - Cancel Button
+                    
+                    
             }
             
             // MARK: - Back Button (Top Left)
@@ -163,12 +170,29 @@ struct AppointmentDetailsView: View {
                                     .shadow(color: .black.opacity(0.1), radius: 4)
                             )
                     }
-                    .padding(.leading, 24)
+                    .padding(.leading, 30)
                     .padding(.top, 0)
                     
                     Spacer()
                 }
                 Spacer()
+            }
+            
+            // MARK: - CheckIn Confirm Popup
+            if showCheckInPopup {
+                CheckInConfirmationPopup(
+                    date: "1st of March 2026",
+                    time: "1.30 PM",
+                    doctorName: "Elizabeth Blackwell",
+                    roomNumber: "F1-307",
+                    onCheckIn: {
+                        showCheckInPopup = false
+                        goToConsultation = true
+                    },
+                    onCancel: {
+                        showCheckInPopup = false
+                    }
+                )
             }
             
             // MARK: - Notification Button (Top Right)
@@ -188,11 +212,15 @@ struct AppointmentDetailsView: View {
 //                .shadow(color: .black.opacity(0.15), radius: 10)
 //        }
         .navigationBarHidden(true)
+        
+        .navigationDestination(isPresented: $goToConsultation) {
+            ConsultationView()
+        }
     }
     
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
-        formatter.dateFormat = "1st of MMMM yyyy EEE"
+        formatter.dateStyle = .long
         return formatter.string(from: date)
     }
 }

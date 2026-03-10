@@ -86,7 +86,7 @@ extension Doctor {
         Doctor(
             id: "4",
             name: "Sarah Johnson",
-            image: "dr.sarah",
+            image: "drG1",
             speciality: "Dentistry",
             clinic: "Smile Dental Care",
             patientsCount: 3500,
@@ -102,7 +102,7 @@ extension Doctor {
         Doctor(
             id: "5",
             name: "Amanda Rodriguez",
-            image: "dr.amanda",
+            image: "drG2",
             speciality: "Dentistry",
             clinic: "Perfect Smile Clinic",
             patientsCount: 3200,
@@ -118,7 +118,7 @@ extension Doctor {
         Doctor(
             id: "6",
             name: "James Wilson",
-            image: "dr.james",
+            image: "drB1",
             speciality: "Dentistry",
             clinic: "Dental Excellence",
             patientsCount: 2900,
@@ -135,7 +135,7 @@ extension Doctor {
         Doctor(
             id: "7",
             name: "Jonathan Smith",
-            image: "dr.jonathan",
+            image: "drB2",
             speciality: "Pulmonology",
             clinic: "Respiratory Health Center",
             patientsCount: 2800,
@@ -151,7 +151,7 @@ extension Doctor {
         Doctor(
             id: "8",
             name: "Robert Kim",
-            image: "dr.robert",
+            image: "drB3",
             speciality: "Pulmonology",
             clinic: "Lung Care Institute",
             patientsCount: 2600,
@@ -168,7 +168,7 @@ extension Doctor {
         Doctor(
             id: "9",
             name: "Lisa Chen",
-            image: "dr.lisa",
+            image: "drG3",
             speciality: "Neorology",
             clinic: "Brain Health Center",
             patientsCount: 3100,
@@ -184,7 +184,7 @@ extension Doctor {
         Doctor(
             id: "10",
             name: "Mark Anderson",
-            image: "dr.mark",
+            image: "drB4",
             speciality: "Neorology",
             clinic: "Neuro Wellness Clinic",
             patientsCount: 2700,
@@ -200,7 +200,7 @@ extension Doctor {
         Doctor(
             id: "11",
             name: "Emily White",
-            image: "dr.emily",
+            image: "drG4",
             speciality: "Neorology",
             clinic: "Advanced Neurology Center",
             patientsCount: 2900,
@@ -217,7 +217,7 @@ extension Doctor {
         Doctor(
             id: "12",
             name: "Daniel Brown",
-            image: "dr.daniel",
+            image: "drB5",
             speciality: "Gastroenterology",
             clinic: "Digestive Health Center",
             patientsCount: 2600,
@@ -233,7 +233,7 @@ extension Doctor {
         Doctor(
             id: "13",
             name: "Patricia Martinez",
-            image: "dr.patricia",
+            image: "drG5",
             speciality: "Gastroenterology",
             clinic: "GI Wellness Institute",
             patientsCount: 2400,
@@ -250,7 +250,7 @@ extension Doctor {
         Doctor(
             id: "14",
             name: "Michael Chen",
-            image: "dr.michael",
+            image: "drB6",
             speciality: "Orthopaedic",
             clinic: "Bone & Joint Clinic",
             patientsCount: 2800,
@@ -266,7 +266,7 @@ extension Doctor {
         Doctor(
             id: "15",
             name: "Kevin Taylor",
-            image: "dr.kevin",
+            image: "drB7",
             speciality: "Orthopaedic",
             clinic: "Sports Ortho Center",
             patientsCount: 3000,
@@ -282,7 +282,7 @@ extension Doctor {
         Doctor(
             id: "16",
             name: "Rachel Green",
-            image: "dr.rachel",
+            image: "drG6",
             speciality: "Orthopaedic",
             clinic: "Spine & Joint Institute",
             patientsCount: 2650,
@@ -299,7 +299,7 @@ extension Doctor {
         Doctor(
             id: "17",
             name: "Steven Harris",
-            image: "dr.steven",
+            image: "drB8",
             speciality: "Otolaryngology",
             clinic: "ENT Specialists",
             patientsCount: 2500,
@@ -315,7 +315,7 @@ extension Doctor {
         Doctor(
             id: "18",
             name: "Olivia Thompson",
-            image: "dr.olivia",
+            image: "drG7",
             speciality: "Otolaryngology",
             clinic: "Head & Neck Care Center",
             patientsCount: 2300,
@@ -326,6 +326,38 @@ extension Doctor {
             price: 2800,
             about: "Dr. Olivia Thompson focuses on sinus surgery and hearing disorders.",
             workingTime: "Wed | Thu | Fri"
+        ),
+        
+        Doctor(
+            id: "19",
+            name: "Emma Marglnza",
+            image: "drG8",
+            speciality: "General",
+            clinic: "Skin Health Clinic",
+            patientsCount: 1850,
+            experienceYears: 10,
+            ratingsCount: 5,
+            reviewsCount: 980,
+            rating: 4.8,
+            price: 3000,
+            about: "Dr. Sophia Martinez specializes in skin diseases, acne treatment, and cosmetic dermatology.",
+            workingTime: "Mon | Tue | Thu"
+        ),
+
+        Doctor(
+            id: "20",
+            name: "Max Malfoy",
+            image: "drB9",
+            speciality: "General",
+            clinic: "Heart Care Medical Center",
+            patientsCount: 2600,
+            experienceYears: 12,
+            ratingsCount: 5,
+            reviewsCount: 1500,
+            rating: 4.9,
+            price: 3500,
+            about: "Dr. Daniel Carter is experienced in treating heart diseases, hypertension, and preventive cardiology.",
+            workingTime: "Tue | Wed | Sat"
         )
     ]
 }

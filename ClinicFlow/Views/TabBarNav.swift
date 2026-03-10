@@ -8,48 +8,51 @@
 import SwiftUI
 
 struct TabBarNav: View {
-    @State private var activeTab: TabModel = .home
+    @StateObject private var tabManager = TabBarViewModel()
 
     var body: some View {
         if #available(iOS 18, *) {
-            NavigationStack {
-                TabView(selection: $activeTab) {
+            ZStack(alignment: .bottom) {
 
-                    Tab(value: .home) {
-                        HomeView()
-                            .toolbarVisibility(.hidden, for: .tabBar)
+                NavigationStack {
+                    TabView(selection: $tabManager.activeTab) {
+                        Tab(value: .home) {
+                            HomeView()
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
+                        Tab(value: .location) {
+                            Text("Map")
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
+                        Tab(value: .activity) {
+                            Text("activity")
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
+                        Tab(value: .account) {
+                            Text("account")
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
                     }
-                    
-
-                    Tab(value: .location) {
-                        //MapView()
-                        Text("Map")
-                            .toolbarVisibility(.hidden, for: .tabBar)
-                    }
-
-                    Tab(value: .activity) {
-                        //ActivityView()
-                        Text("activity")
-                            .toolbarVisibility(.hidden, for: .tabBar)
-                    }
-
-                    Tab(value: .account) {
-                        Text("account")
-                        //ProfileView()
-                            .toolbarVisibility(.hidden, for: .tabBar)
-                    }
+                    .toolbarVisibility(.hidden, for: .tabBar)
                 }
-                .background(Color.white)
-                .overlay(alignment: .bottom) {
-                    CustomTabBar(activeTab: $activeTab)
-                        .padding(.bottom, -20)
-                        .shadow(color: .black.opacity(0.15), radius: 10)
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 80)
                 }
+
+//                CustomTabBar(activeTab: $tabManager.activeTab)
+//                    .shadow(color: .black.opacity(0.15), radius: 10)
+//                    .padding(.bottom, 8)
                 
+                if !tabManager.isTabBarHidden {
+                    CustomTabBar(activeTab: $tabManager.activeTab)
+                        .shadow(color: .black.opacity(0.15), radius: 10)
+                        .padding(.bottom, 8)
+                }
             }
+            .ignoresSafeArea(edges: .bottom)
+            .environmentObject(tabManager)
         }
     }
-        
 }
 
 // MARK: - UIView Extension
@@ -65,4 +68,5 @@ extension UIView {
 
 #Preview {
     TabBarNav()
+        .environmentObject(TabBarViewModel())
 }

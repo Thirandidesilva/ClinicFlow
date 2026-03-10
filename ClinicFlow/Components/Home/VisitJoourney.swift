@@ -4,78 +4,76 @@
 //
 //  Created by M H T U De Silva on 2026-02-25.
 //
-//
-//  StepIndicator.swift
-//  ClinicFlow
-//
-//  Created by M H T U De Silva on 2026-02-25.
-//
 
 import SwiftUI
 
-struct VisitJoourney: View {
+struct VisitJourney: View {
     let steps: [String]
     let currentStep: Int
     @State private var activeStep = 0
     
     var body: some View {
         HStack(spacing: 0) {
-            // Blue vertical bar on the left
-//            Rectangle()
-//                .fill(Color(hex: "0930A6"))
-//                .frame(width: 8)
-            
-            // Steps content
             HStack(spacing: 0) {
-                ForEach(0..<steps.count, id: \.self) { index in
-                    VStack(spacing: 8) {
-                        // Circle
-                        ZStack {
-                            Circle()
-                                .stroke(Color(hex: "0930A6"), lineWidth: 2)
-                                .frame(width: 40, height: 40)
-                            
-                            if index <= activeStep {
-                                Circle()
-                                    .fill(Color(hex: "0930A6"))
-                                    .frame(width: 40, height: 40)
+                ForEach(Array(steps.enumerated()), id: \.element) { index, step in
+                    ZStack {
+                        // Line drawn BEHIND the circle
+                        if index < steps.count - 1 {
+                            HStack {
+                                Spacer()
+                                Rectangle()
+                                    .fill(lineColor(for: index))
+                                    .frame(height: 2)
+                                    .frame(maxWidth: .infinity)
+                                    .padding(.bottom, 22)
                             }
-                            
-                            Text("\(index + 1)")
-                                .font(.system(size: 16, weight: .semibold))
-                                .foregroundColor(index <= activeStep ? .white : Color(hex: "0930A6"))
-                                .scaleEffect(index == activeStep ? 1.1 : 1.0)
+                            .offset(x: 33)
                         }
                         
-                        // Step label
-                        Text(steps[index])
-                            .font(.system(size: 12))
-                            .fontWeight(index == activeStep ? .semibold : .regular)
-                            .foregroundColor(index == activeStep ? Color(hex: "0930A6") : .black)
-                            .lineLimit(1)
-                            .frame(width: 70)
+                        VStack(spacing: 8) {
+                            ZStack {
+                                // Outer glow circle (only for completed/active)
+                                if index <= activeStep {
+                                    Circle()
+                                        .fill(Color(hex: "0930A6").opacity(0.12))
+                                        .frame(width: 53, height: 53)
+                                }
+                                
+                                // Main circle
+                                Circle()
+                                    .stroke(strokeColor(for: index), lineWidth: 2.5)
+                                    .frame(width: 44, height: 44)
+                                    .background(Circle().fill(fillColor(for: index)))
+                                
+                                // Number
+                                Text("\(index + 1)")
+                                    .font(.system(size: 20, weight: .bold))
+                                    .foregroundColor(textColor(for: index))
+                            }
+                            .frame(width: 53, height: 53)
+                            
+                            // Step label
+                            Text(step)
+                                .font(.system(size: 10, weight: .semibold))
+                                .foregroundColor(index <= activeStep ? Color.black : Color.gray)
+                                .multilineTextAlignment(.center)
+                                .lineLimit(2)
+                                .fixedSize(horizontal: false, vertical: true)
+                                .frame(width: 72)
+                        }
                     }
-                    
-                    // Connecting line (except for last step)
-                    if index < steps.count - 1 {
-                        Rectangle()
-                            .fill(Color(hex: "0930A6"))
-                            .frame(height: 2)
-                            .frame(maxWidth: .infinity)
-                            .opacity(index < activeStep ? 1.0 : 0.5)
-                            .padding(.bottom, 30)
-                    }
+                    .frame(maxWidth: .infinity)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 16)
+            .padding(.horizontal, 4)
+            .padding(.vertical, 20)
         }
         .frame(height: 100)
         .background(Color.white)
         .cornerRadius(12)
         .overlay(
             RoundedRectangle(cornerRadius: 12)
-                .stroke(Color(hex: "0930A6"), lineWidth: 1.5)
+                .stroke(Color(hex: "0930A6").opacity(0.5), lineWidth: 1.5)
         )
         .padding(.horizontal, 24)
         .onAppear {
@@ -83,17 +81,55 @@ struct VisitJoourney: View {
         }
     }
     
+    // MARK: - Styling Functions
+    
+    private func strokeColor(for index: Int) -> Color {
+        if index < activeStep {
+            return Color(hex: "0930A6") // Completed
+        } else if index == activeStep {
+            return Color(hex: "0930A6") // In progress
+        } else {
+            return Color.gray.opacity(0.3) // Not started
+        }
+    }
+    
+    private func fillColor(for index: Int) -> Color {
+        if index < activeStep {
+            return Color(hex: "0930A6") // Completed - filled
+        } else {
+            return Color.white // Not completed - white
+        }
+    }
+    
+    private func textColor(for index: Int) -> Color {
+        if index < activeStep {
+            return .white // Completed - white text
+        } else if index == activeStep {
+            return Color(hex: "0930A6") // In progress - blue text
+        } else {
+            return Color.gray // Not started - gray text
+        }
+    }
+    
+    private func lineColor(for index: Int) -> Color {
+        if index < activeStep {
+            return Color(hex: "0930A6") // Completed line - blue
+        } else {
+            return Color.gray.opacity(0.3) // Not completed - gray
+        }
+    }
+    
+    // MARK: - Animation
+    
     func startIOSAnimation() {
-        // Slower iOS-style progression
-        Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { timer in  // Changed from 2.0 to 3.0 seconds
-            withAnimation(.spring(response: 0.8, dampingFraction: 0.75, blendDuration: 0)) {  // Slower spring response
+        Timer.scheduledTimer(withTimeInterval: 4.0, repeats: true) { timer in
+            withAnimation(.spring(response: 0.8, dampingFraction: 0.75, blendDuration: 0)) {
                 activeStep = (activeStep + 1) % steps.count
             }
             
-            // Reset when reaching the end
             if activeStep == 0 {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {  // Longer pause before reset
-                    withAnimation(.spring(response: 0.008, dampingFraction: 0.0075)) {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    withAnimation(.spring(response: 0.8, dampingFraction: 0.75)) {
                         activeStep = 0
                     }
                 }
@@ -104,7 +140,7 @@ struct VisitJoourney: View {
 
 #Preview {
     VStack(spacing: 20) {
-        VisitJoourney(
+        VisitJourney(
             steps: ["Checkin", "Consultation", "Pharmacy", "Lab"],
             currentStep: 1
         )

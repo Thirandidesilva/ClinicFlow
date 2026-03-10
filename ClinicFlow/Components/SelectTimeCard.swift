@@ -16,10 +16,10 @@ import SwiftUI
 
 struct SelectTimeCard: View {
     @Binding var selectedTime: String
-    let timeSlots = ["Morning", "Evening", "Night"]
+    let timeSlots = ["Morning", "Afternoon", "Evening"]
     
     var body: some View {
-        HStack(spacing: 1) {
+        HStack(spacing: -40) {
             ForEach(timeSlots, id: \.self) { time in
                 TimeSlotButton(
                     title: time,
@@ -27,8 +27,16 @@ struct SelectTimeCard: View {
                 ) {
                     selectedTime = time
                 }
+                .frame(maxWidth: .infinity)
             }
         }
+        .padding(.horizontal, 4)
+        .padding(.vertical, 4)
+        .background(
+            Capsule()
+                .stroke(Color.gray.opacity(0.3), lineWidth: 1)
+                .padding(.horizontal, )
+        )
     }
 }
 
@@ -47,18 +55,18 @@ struct TimeSlotButton: View {
                 }
                 
                 Text(title)
-                    .font(.system(size: 15, weight: isSelected ? .semibold : .regular))
+                    .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
                     .foregroundColor(isSelected ? .white : .black)
             }
             .padding(.horizontal, isSelected ? 20 : 24)
             .padding(.vertical, 12)
-            .frame(minWidth: 110)
+            .frame(minWidth: 0)
             .background(
                 Capsule()
                     .fill(isSelected ? Color(hex: "0930A6") : Color.white)
                     .overlay(
                         Capsule()
-                            .stroke(Color.gray.opacity(0.3), lineWidth: isSelected ? 0 : 1)
+                            .stroke(Color(hex: "0930A6"), lineWidth: isSelected ? 0 : 1)
                     )
             )
         }
@@ -77,13 +85,14 @@ struct PreviewWrapper: View {
     
     var body: some View {
         VStack(spacing: 30) {
-            VStack(alignment: .leading, spacing: 16) {
-                Text("Select Time")
-                    .font(.system(size: 18, weight: .bold))
-                    .padding(.leading, 20)
+            VStack(alignment: .leading, spacing: 0) {
+//                Text("Select Time")
+//                    .font(.system(size: 16, weight: .regular))
+//                    .padding(.horizontal, 30)
                 
                 SelectTimeCard(selectedTime: $selectedTime)
-                    .padding(.horizontal, 20)
+                
+                    //.padding(.horizontal, 20)
                 
 //                Text("Selected: \(selectedTime)")
 //                    .font(.system(size: 14))
@@ -91,7 +100,6 @@ struct PreviewWrapper: View {
 //                    .padding(.leading, 20)
             }
         }
-        .padding()
         .background(Color.white)
     }
 }

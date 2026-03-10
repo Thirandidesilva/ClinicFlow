@@ -11,21 +11,23 @@ struct CustomTabBar: View {
     var activeForeground: Color = .white
     var activeBackground: Color = Color(hex: "0930A6")
     @Binding var activeTab: TabModel
+    @EnvironmentObject var tabManager: TabBarViewModel
+
     var body: some View {
-        //Text("Hello, World!")
-        
         HStack(spacing: 0) {
-            ForEach(TabModel.allCases, id: \.rawValue) { tab in
-                Button{
+            ForEach(TabModel.mainTabs, id: \.rawValue) { tab in
+                Button {
+                    if tabManager.activeTab == .none {
+                        tabManager.dismissSecondaryPage?()
+                    }
                     activeTab = tab
                 } label: {
                     HStack(spacing: 2) {
                         Image(tab.icon)
                             .renderingMode(.template)
-                            .font(.title .bold())
+                            .font(.title.bold())
                             .frame(width: 30, height: 30)
-                        
-                        //active button label
+
                         if activeTab == tab {
                             Text(tab.title)
                                 .font(.caption)
@@ -33,7 +35,7 @@ struct CustomTabBar: View {
                                 .lineLimit(1)
                         }
                     }
-                    .padding(.vertical,8)
+                    .padding(.vertical, 8)
                     .foregroundStyle(activeTab == tab ? activeForeground : .black)
                     .padding(.leading, 20)
                     .padding(.trailing, 15)
@@ -47,6 +49,9 @@ struct CustomTabBar: View {
                 .buttonStyle(.plain)
             }
         }
+        .frame(maxWidth: .infinity)
+        .padding(.top, 10)
+        .background(Color.white)
     }
 }
 

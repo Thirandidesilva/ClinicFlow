@@ -31,6 +31,11 @@ class AddPatientViewModel: ObservableObject {
     @Published var showValidationError: Bool = false
     @Published var validationMessage: String = ""
     
+    @Published var navigateToBooking: Bool = false
+    func addNewBooking() {
+        navigateToBooking = true
+    }
+    
     // Options
     let genderOptions = ["Male", "Female", "Other"]
     let weightOptions = ["Weight", "40-50 kg", "50-60 kg", "60-70 kg", "70-80 kg", "80-90 kg", "90+ kg"]
@@ -39,31 +44,31 @@ class AddPatientViewModel: ObservableObject {
     let bloodSugarOptions = ["Blood Sugar", "Normal (70-100 mg/dL)", "Pre-diabetic (100-125 mg/dL)", "Diabetic (126+ mg/dL)"]
     
     // MARK: - Validation
-    func validateForm() -> Bool {
-        if fullName.trimmingCharacters(in: .whitespaces).isEmpty {
-            validationMessage = "Please enter patient name"
-            showValidationError = true
-            return false
-        }
-        
-        if age.trimmingCharacters(in: .whitespaces).isEmpty {
-            validationMessage = "Please enter age"
-            showValidationError = true
-            return false
-        }
-        
-        if contactNumber.trimmingCharacters(in: .whitespaces).isEmpty {
-            validationMessage = "Please enter contact number"
-            showValidationError = true
-            return false
-        }
-        
-        return true
-    }
+//    func validateForm() -> Bool {
+//        if fullName.trimmingCharacters(in: .whitespaces).isEmpty {
+//            validationMessage = "Please enter patient name"
+//            showValidationError = true
+//            return false
+//        }
+//        
+//        if age.trimmingCharacters(in: .whitespaces).isEmpty {
+//            validationMessage = "Please enter age"
+//            showValidationError = true
+//            return false
+//        }
+//        
+//        if contactNumber.trimmingCharacters(in: .whitespaces).isEmpty {
+//            validationMessage = "Please enter contact number"
+//            showValidationError = true
+//            return false
+//        }
+//        
+//        return true
+//    }
     
     // MARK: - Add Patient
     func addPatient() {
-        guard validateForm() else { return }
+        //guard validateForm() else { return }
         
         print("Adding patient:")
         print("Name: \(fullName)")
@@ -78,6 +83,25 @@ class AddPatientViewModel: ObservableObject {
         print("Medical Records: \(medicalRecords)")
         
         // TODO: Save to database or API
+    }
+    
+    // AddPatientViewModel.swift
+
+    func buildPatient() -> Patient {
+        return Patient(
+            id: UUID().uuidString,
+            name: fullName,
+            age: age,
+            gender: gender,
+            contactNumber: contactNumber,
+            address: address
+        )
+    }
+
+    @discardableResult
+    func addPatient() -> Patient? {
+        //guard validateForm() else { return nil }
+        return buildPatient()
     }
     
     // MARK: - Reset

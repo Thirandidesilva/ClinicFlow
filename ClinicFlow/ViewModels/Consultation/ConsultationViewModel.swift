@@ -34,6 +34,10 @@ class ConsultationViewModel: ObservableObject {
         timer?.invalidate()
     }
     
+    var isMyTurnCompleted: Bool {
+        return currentServingNumber > myQueueNumber
+    }
+    
     // MARK: - Queue Simulation
     func startQueueSimulation() {
         // Simulate queue progression every 10 seconds (representing 15 min per patient)
@@ -84,6 +88,8 @@ class ConsultationViewModel: ObservableObject {
         
         return items
     }
+    
+    
     
     // MARK: - Calculate Wait Time
     func calculateWaitTime() {

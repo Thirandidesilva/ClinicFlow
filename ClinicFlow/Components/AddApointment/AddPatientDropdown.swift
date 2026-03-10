@@ -36,7 +36,7 @@ struct PatientDropdownField: View {
                 
                 Text(selectedPatient?.name ?? "Patient Name")
                     .font(.system(size: 15))
-                    .foregroundColor(selectedPatient == nil ? .gray : .black)
+                    .foregroundColor(selectedPatient == nil ? Color(hex: "0930A6").opacity(0.6) : .black)
                 
                 Spacer()
                 

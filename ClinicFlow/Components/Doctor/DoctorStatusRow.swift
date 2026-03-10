@@ -17,7 +17,7 @@ struct DoctorStatsRow: View {
         HStack(spacing: 0) {
             // Patients
             StatItem(
-                icon: "person.3.fill",
+                icon: "user-group",
                 value: "\(patientsCount / 1000)000 +",
                 label: "Patients"
             )
@@ -26,7 +26,7 @@ struct DoctorStatsRow: View {
             
             // Experience
             StatItem(
-                icon: "medal.fill",
+                icon: "medal",
                 value: "\(experienceYears) +",
                 label: "Experience"
             )
@@ -35,7 +35,7 @@ struct DoctorStatsRow: View {
             
             // Ratings
             StatItem(
-                icon: "person.2.fill",
+                icon: "customer-review",
                 value: "\(ratingsCount)",
                 label: "Ratings"
             )
@@ -44,7 +44,7 @@ struct DoctorStatsRow: View {
             
             // Reviews
             StatItem(
-                icon: "message.fill",
+                icon: "review",
                 value: "\(reviewsCount)",
                 label: "Reviews"
             )
@@ -59,19 +59,28 @@ struct StatItem: View {
     let label: String
     
     var body: some View {
-        VStack(spacing: 8) {
-            Image(systemName: icon)
-                .font(.system(size: 24))
+        VStack(spacing: 10) {
+            
+            Image(icon)
+                .font(.system(size: 18, weight: .semibold))
                 .foregroundColor(.black)
+                .frame(width: 42, height: 42)
+                .background(
+                    Circle()
+                        .fill(Color.gray.opacity(0.09))
+                        .padding(-5)
+                )
             
             Text(value)
-                .font(.system(size: 16, weight: .bold))
-                .foregroundColor(.black)
+                .font(.system(size: 14, weight: .bold))
+                .foregroundColor(.primary)
             
             Text(label)
-                .font(.system(size: 12))
-                .foregroundColor(.black)
+                .font(.system(size: 14))
+                .foregroundColor(.primary)
+                .padding(.top,-5)
         }
+        .frame(maxWidth: .infinity)
     }
 }
 

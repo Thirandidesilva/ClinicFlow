@@ -5,13 +5,6 @@
 //  Created by M H T U De Silva on 2026-03-04.
 //
 
-//
-//  CheckInConfirmationPopup.swift
-//  ClinicFlow
-//
-//  Created by M H T U De Silva on 2026-03-04.
-//
-
 import SwiftUI
 
 struct CheckInConfirmationPopup: View {
@@ -25,7 +18,7 @@ struct CheckInConfirmationPopup: View {
     
     var body: some View {
         ZStack {
-            // Dark overlay
+            // MARK: - Dark overlay
             Color.black.opacity(0.6)
                 .ignoresSafeArea()
                 .onTapGesture {
@@ -146,6 +139,7 @@ struct CheckInConfirmationPopup: View {
             }
             .ignoresSafeArea()
         }
+        .ignoresSafeArea() 
         .onAppear {
             withAnimation(.spring(response: 0.5, dampingFraction: 0.8)) {
                 showPopup = true

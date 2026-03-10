@@ -12,36 +12,40 @@ struct AppointmentDashboardView: View {
     @State private var showNotifications = false
     @State private var selectedSpecialty: Specialty? = nil
     @State private var navigateToSpecialtyTab = false
+    @State private var showAllDoctors = false
     @StateObject private var viewModel = AppointmentViewModel()
     @Environment(\.dismiss) var dismiss
-    
+    @EnvironmentObject var tabManager: TabBarViewModel
+
     var body: some View {
-        
-        NavigationStack {
+        ZStack(alignment: .bottom) {
+            
             ZStack(alignment: .topTrailing) {
                 // Background
                 Color(hex: "FFFFFF")
                     .ignoresSafeArea()
                 
-                // Content
-                ScrollView(.vertical, showsIndicators: false) {
-                    VStack(alignment: .leading, spacing: 0) {
-                        
-                        Text("Location")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                            .padding(.leading, 30)
-                            .padding(.top, 2)
-                        
-                        Text("Colombo 05, Sri Lanka")
-                            .font(.subheadline)
-                            .fontWeight(.semibold)
-                            .padding(.leading, 30)
+                // Contents
+                VStack(alignment: .leading, spacing: 0) {
+                    
+                    Text("Location")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                        .padding(.leading, 80)
+                        .padding(.top, 2)
+                    
+                    Text("Colombo 05, Sri Lanka")
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
+                        .padding(.leading, 80)
+                        .padding(.bottom, 10)
+                    
+                    ScrollView(.vertical, showsIndicators: false) {
                         
                         Text("Let's search for your Doctor")
                             .font(.title2)
                             .fontWeight(.semibold)
-                            .padding(.leading, 25)
+                            .padding(.leading, -60)
                             .padding(.top, 30)
                             .padding(.bottom, 20)
                         
@@ -75,14 +79,13 @@ struct AppointmentDashboardView: View {
                                         selectedSpecialty = specialty
                                         navigateToSpecialtyTab = true
                                     }
-                                    .padding(.bottom, 0)
                                 }
                             }
                             .padding(.horizontal, 24)
                             .padding(.top, 30)
                         }
                         
-                        //MARK: - Recent Consultations
+                        // MARK: - Recent Consultations
                         HStack {
                             Text("Recent Consultations")
                                 .font(.system(size: 16, weight: .medium))
@@ -91,8 +94,7 @@ struct AppointmentDashboardView: View {
                             Spacer()
                             
                             Button(action: {
-                                selectedSpecialty = Specialty.allSpecialties.first
-                                navigateToSpecialtyTab = true
+                                showAllDoctors = true
                             }) {
                                 Text("See All")
                                     .font(.system(size: 14))
@@ -101,30 +103,28 @@ struct AppointmentDashboardView: View {
                         }
                         .padding(.horizontal, 24)
                         .padding(.top, 20)
-                        .padding(.bottom, 0)
                         
                         // MARK: - Doctor Cards
                         VStack(spacing: 16) {
                             ForEach(viewModel.isSearching
                                     ? viewModel.filteredDoctors
-                                    : viewModel.recentConsultations) { doctor in
-                                
+                                    : (showAllDoctors
+                                       ? Array(viewModel.recentConsultations.prefix(7))
+                                       : Array(viewModel.recentConsultations.prefix(2)))
+                            ) { doctor in
                                 DoctorCard(doctor: doctor) {
                                     viewModel.bookAppointment(for: doctor)
                                 }
                             }
                         }
                         .padding(.top, 16)
-                        .padding(.bottom, 120)
                     }
                 }
                 
                 // MARK: - Back Button (Top Left)
                 VStack {
                     HStack {
-                        Button(action: {
-                            dismiss()
-                        }) {
+                        Button(action: { dismiss() }) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(.black)
@@ -135,16 +135,20 @@ struct AppointmentDashboardView: View {
                                         .shadow(color: .black.opacity(0.1), radius: 4)
                                 )
                         }
-                        .padding(.leading, 24)
-                        .padding(.top, 60)
-                        
+                        .padding(.leading, 30)
                         Spacer()
                     }
                     Spacer()
                 }
                 
-                // MARK: - Notification button
-                NotificationButton()
+                // MARK: - Notification Button (Top Right)
+                VStack {
+                    HStack {
+                        Spacer()
+                        NotificationButton()
+                    }
+                    Spacer()
+                }
             }
             .navigationBarHidden(true)
             .navigationDestination(isPresented: $navigateToSpecialtyTab) {
@@ -152,10 +156,32 @@ struct AppointmentDashboardView: View {
                     SpecialtyTabView(preselectedSpecialty: specialty)
                 }
             }
+            
+            // MARK: - Tab Bar (nothing highlighted) 👈 add this
+            CustomTabBar(activeTab: Binding(
+                get: { .none },
+                set: { newTab in
+                    tabManager.activeTab = newTab
+                    dismiss()
+                }
+            ))
+            .shadow(color: .black.opacity(0.15), radius: 10)
+            .padding(.bottom, 8)
+        }
+        .ignoresSafeArea(edges: .bottom)
+        .onAppear {
+            tabManager.activeTab = .none
+            tabManager.dismissSecondaryPage = {
+                dismiss()
+            }
+        }
+        .onDisappear {
+            tabManager.dismissSecondaryPage = nil
         }
     }
 }
 
 #Preview {
     AppointmentDashboardView()
+        .environmentObject(TabBarViewModel())
 }

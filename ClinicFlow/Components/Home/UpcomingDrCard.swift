@@ -16,6 +16,7 @@ struct UpcomingDrCard: View {
     let rating: Double
     let reviewCount: Int
     let onCheckIn: () -> Void
+    @State private var showCheckInPopup = false
     
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {

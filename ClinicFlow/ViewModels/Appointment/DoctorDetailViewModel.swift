@@ -12,26 +12,37 @@ class DoctorDetailViewModel: ObservableObject {
     @Published var doctor: Doctor
     @Published var reviews: [Review] = []
     @Published var showAllReviews: Bool = false
-    
+    @Published var navigateToBooking = false
+    @Published var navigateToAddPatient = false
+
     init(doctor: Doctor) {
         self.doctor = doctor
         loadReviews()
     }
-    
+
     // MARK: - Load Reviews
     func loadReviews() {
         reviews = Review.sampleReviews
     }
-    
+
     // MARK: - Get Display Reviews
     func getDisplayReviews() -> [Review] {
         return showAllReviews ? reviews : Array(reviews.prefix(2))
     }
-    
+
     // MARK: - Book Appointment
     func bookAppointment() {
-        print("Booking appointment with \(doctor.name)")
-        // TODO: Navigate to booking confirmation
+        if isFirstTimeBooking() {
+            navigateToAddPatient = true
+        } else {
+            navigateToBooking = true
+        }
+    }
+
+    // MARK: - First Time Booking Check
+    private func isFirstTimeBooking() -> Bool {
+        // Checks UserDefaults to see if user has ever saved a patient before
+        return !UserDefaults.standard.bool(forKey: "hasAddedPatient")
     }
 }
 

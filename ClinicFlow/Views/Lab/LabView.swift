@@ -9,38 +9,40 @@ import SwiftUI
 
 struct LabView: View {
     @StateObject private var viewModel = LabViewModel()
+    
     @Environment(\.dismiss) var dismiss
-    //@EnvironmentObject var tabManager: TabBarManager
-    @State private var navigateToHome = false
+    @EnvironmentObject var tabManager: TabBarViewModel
     
     var body: some View {
         ZStack {
             Color.white.ignoresSafeArea()
             
-            ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
+            VStack(alignment: .leading, spacing: 24) {
+                
+                // MARK: - Header
+                
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Your Queue Status")
+                        .font(.system(size: 14))
+                        .foregroundColor(.gray)
                     
-                    // MARK: - Header
-                    VStack(alignment: .leading, spacing: 4) {
-                        Text("Your Queue Status")
-                            .font(.system(size: 14))
-                            .foregroundColor(.gray)
-                        
-                        Text("LABORTARY")
-                            .font(.system(size: 24, weight: .bold))
-                            .foregroundColor(.black)
-                    }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.horizontal, 24)
-                    .padding(.top, 0)
-                    .padding(.leading, 55)
+                    Text("LABORTARY")
+                        .font(.system(size: 24, weight: .bold))
+                        .foregroundColor(.black)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.horizontal, 24)
+                .padding(.top, 0)
+                .padding(.leading, 55)
+                
+                ScrollView(.vertical, showsIndicators: false) {
                     
                     // MARK: - Notification Message
+                    
                     HStack(spacing: 10) {
                         Image(systemName: "bell.fill")
                             .font(.system(size: 16))
                             .foregroundColor(Color(hex: "0930A6").opacity(0.8))
-                            
                         
                         Text("You will receive an automatic notification when your turn is approaching")
                             .font(.system(size: 16))
@@ -57,9 +59,11 @@ struct LabView: View {
                     .padding(.top, 10)
                     
                     // MARK: - Lab Progress Steps
+                    
                     LabProgressCard(steps: viewModel.steps)
                     
                     // MARK: - Preparation Instructions
+                    
                     PreparationInstructionCard(instructions: [
                         PreparationInstruction(
                             icon: "scissors",
@@ -71,9 +75,9 @@ struct LabView: View {
                         )
                     ])
                     .padding(.horizontal, 40)
-                        
                     
                     // MARK: - Lab Token Card
+                    
                     LabTokenCard(
                         token: viewModel.labToken,
                         status: viewModel.currentStatus,
@@ -84,51 +88,58 @@ struct LabView: View {
                     .padding(.bottom, 20)
                     
                     // MARK: - Complete Lab Button
+                    
                     Button(action: {
                         viewModel.completeLab()
-                        navigateToHome = true
+                        tabManager.activeTab = .home
+                        dismiss()
                     }) {
                         Text("Complete Labortary")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(.white)
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
-                            //.padding(.horizontal, 60)
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
                                     .fill(viewModel.isCompleted ? Color(hex: "0930A6") : Color.gray.opacity(0.3))
                             )
                     }
                     .disabled(!viewModel.isCompleted)
-                    .padding(.horizontal, 50)
+                    .padding(.horizontal, 40)
                     .padding(.top, 20)
                     
                     // MARK: - Cancel Button
+                    
                     Button(action: {
+                        tabManager.isTabBarHidden = true
                         viewModel.requestCancelToken()
                     }) {
                         Text("Cancel Token")
-                            .font(.system(size: 14, weight: .semibold))
+                            .font(.system(size: 16, weight: .semibold))
                             .foregroundColor(Color(hex: "E01F20"))
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 16)
                             .background(
                                 RoundedRectangle(cornerRadius: 30)
-                                    .fill( Color.white)
+                                    .fill(Color.white)
                             )
                             .overlay(
                                 RoundedRectangle(cornerRadius: 30)
                                     .stroke(Color(hex: "E01F20"), lineWidth: 2)
                             )
                     }
-                    .padding(.horizontal, 50)
+                    .padding(.horizontal, 40)
+                    .padding(.top, 20)
+                    .padding(.bottom, 60)
                 }
             }
             
-            // MARK: - Back Button (Top Left)
+            // MARK: - Back Button
+            
             VStack {
                 HStack {
                     Button(action: {
+                        tabManager.activeTab = .home
                         dismiss()
                     }) {
                         Image(systemName: "chevron.left")
@@ -141,7 +152,7 @@ struct LabView: View {
                                     .shadow(color: .black.opacity(0.1), radius: 4)
                             )
                     }
-                    .padding(.leading, 24)
+                    .padding(.leading, 30)
                     .padding(.top, 0)
                     
                     Spacer()
@@ -149,7 +160,8 @@ struct LabView: View {
                 Spacer()
             }
             
-            // MARK: - Notification Button (Top Right)
+            // MARK: - Notification Button
+            
             VStack {
                 HStack {
                     Spacer()
@@ -161,24 +173,30 @@ struct LabView: View {
             }
             
             // MARK: - Cancel Token Popup
+            
             if viewModel.showCancelPopup {
                 CancelTokenPopup(
                     onCancel: {
                         viewModel.cancelToken()
-                        navigateToHome = true
+                        tabManager.isTabBarHidden = false
+                        tabManager.activeTab = .home
+                        dismiss()
                     },
                     onDismiss: {
+                        tabManager.isTabBarHidden = false
                         viewModel.showCancelPopup = false
                     }
                 )
             }
         }
-//        .overlay(alignment: .bottom) {
-//            CustomTabBar(activeTab: $tabManager.activeTab)
-//                .padding(.bottom, -20)
-//                .shadow(color: .black.opacity(0.15), radius: 10)
-//        }
         .navigationBarHidden(true)
+        .onAppear {
+            tabManager.activeTab = .none
+            tabManager.dismissSecondaryPage = { dismiss() }
+        }
+        .onDisappear {
+            tabManager.dismissSecondaryPage = nil
+        }
         .alert("Report is Ready!", isPresented: $viewModel.showCompletedAlert) {
             Button("OK", role: .none) {
                 viewModel.showCompletedAlert = false
@@ -186,13 +204,10 @@ struct LabView: View {
         } message: {
             Text("Your lab report is ready to collect!")
         }
-        .navigationDestination(isPresented: $navigateToHome) {
-            HomeView()
-        }
     }
 }
 
 #Preview {
     LabView()
-        //.environmentObject(TabBarManager())
+        .environmentObject(TabBarViewModel())
 }

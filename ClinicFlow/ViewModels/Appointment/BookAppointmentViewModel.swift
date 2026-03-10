@@ -16,8 +16,10 @@ class BookAppointmentViewModel: ObservableObject {
     @Published var showValidationError: Bool = false
     @Published var validationMessage: String = ""
     @Published var navigateToAddPatient: Bool = false
+    @Published var navigateToAppointmentDetails: Bool = false
     
-    let patients: [Patient] = Patient.samplePatients
+    
+    @Published var patients: [Patient] = Patient.samplePatients
     let doctor: Doctor
     
     init(doctor: Doctor) {
@@ -33,6 +35,11 @@ class BookAppointmentViewModel: ObservableObject {
     func addNewPatient() {
         navigateToAddPatient = true
     }
+    
+    func goToAppointmentDetails() {
+        navigateToAppointmentDetails = true
+    }
+    
     
     // MARK: - Validation
     func validateBooking() -> Bool {
