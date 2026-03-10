@@ -14,7 +14,7 @@ struct TabBarNav: View {
         if #available(iOS 18, *) {
             ZStack(alignment: .bottom) {
 
-                NavigationStack {
+                NavigationStack(path: $tabManager.navigationPath) {
                     TabView(selection: $tabManager.activeTab) {
                         Tab(value: .home) {
                             HomeView()
@@ -34,6 +34,30 @@ struct TabBarNav: View {
                         }
                     }
                     .toolbarVisibility(.hidden, for: .tabBar)
+                    .navigationDestination(for: NavigationRoute.self) { route in
+                        switch route {
+                        case .consultation:
+                            ConsultationView()
+                        case .appointmentDashboard:
+                            AppointmentDashboardView()
+                        case .pharmacy:
+                            PharmacyView()
+                        case .lab:
+                            LabView()
+                        case .emergencyLab:
+                            EmergencyLabView()
+                        case .specialtyTab(let specialty):
+                            SpecialtyTabView(preselectedSpecialty: specialty)
+                        case .doctorDetail(let doctor):
+                            DoctorDetailView(doctor: doctor)
+                        case .bookAppointment(let doctor):
+                            BookAppointmentView(doctor: doctor)
+                        case .addPatient(let doctor):
+                            AddPatientView(doctor: doctor)
+                        case .appointmentDetail(let booking):
+                            AppointmentDetailsView(booking: booking)
+                        }
+                    }
                 }
                 .safeAreaInset(edge: .bottom) {
                     Color.clear.frame(height: 80)

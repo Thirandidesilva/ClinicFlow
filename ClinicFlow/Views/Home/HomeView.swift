@@ -12,13 +12,6 @@ struct HomeView: View {
     @EnvironmentObject var tabManager: TabBarViewModel
     
     @State private var showNotifications = false
-    @State private var goToConsultation = false
-    
-    @State private var goToAppointment = false
-    @State private var goToPharmacy = false
-    @State private var goToLab = false
-    @State private var goToEmergencyLab = false
-    
     @State private var showCheckInPopup = false
     
     var body: some View {
@@ -57,16 +50,16 @@ struct HomeView: View {
                         // MARK: - Service Grid
                         ServiceGrid(
                             onAppointmentTap: {
-                                goToAppointment = true
+                                tabManager.navigationPath.append(NavigationRoute.appointmentDashboard)
                             },
                             onPharmacyTap: {
-                                goToPharmacy = true
+                                tabManager.navigationPath.append(NavigationRoute.pharmacy)
                             },
                             onLabTap: {
-                                goToLab = true
+                                tabManager.navigationPath.append(NavigationRoute.lab)
                             },
                             onEmergencyLabTap: {
-                                goToEmergencyLab = true
+                                tabManager.navigationPath.append(NavigationRoute.emergencyLab)
                             }
                         )
                         .padding(.horizontal, 24)
@@ -123,21 +116,6 @@ struct HomeView: View {
                     }
                 }
             }
-            .navigationDestination(isPresented: $goToConsultation) {
-                ConsultationView()
-            }
-            .navigationDestination(isPresented: $goToAppointment) {
-                AppointmentDashboardView()
-            }
-            .navigationDestination(isPresented: $goToPharmacy) {
-                PharmacyView()
-            }
-            .navigationDestination(isPresented: $goToLab) {
-                LabView()
-            }
-            .navigationDestination(isPresented: $goToEmergencyLab) {
-                EmergencyLabView()
-            }
             
             // MARK: - CheckIn Confirm Popup
             if showCheckInPopup {
@@ -149,7 +127,7 @@ struct HomeView: View {
                     onCheckIn: {
                         showCheckInPopup = false
                         tabManager.isTabBarHidden = false
-                        goToConsultation = true
+                        tabManager.navigationPath.append(NavigationRoute.consultation)
                     },
                     onCancel: {
                         showCheckInPopup = false

@@ -11,8 +11,6 @@ struct AppointmentDashboardView: View {
     
     @State private var showNotifications = false
     @State private var selectedSpecialty: Specialty? = nil
-    @State private var navigateToSpecialtyTab = false
-    @State private var showAllDoctors = false
     @StateObject private var viewModel = AppointmentViewModel()
     @Environment(\.dismiss) var dismiss
     @EnvironmentObject var tabManager: TabBarViewModel
@@ -77,7 +75,7 @@ struct AppointmentDashboardView: View {
                                         isSelected: false
                                     ) {
                                         selectedSpecialty = specialty
-                                        navigateToSpecialtyTab = true
+                                        tabManager.navigationPath.append(NavigationRoute.specialtyTab(specialty))
                                     }
                                 }
                             }
@@ -94,7 +92,7 @@ struct AppointmentDashboardView: View {
                             Spacer()
                             
                             Button(action: {
-                                showAllDoctors = true
+                                viewModel.expandDoctorList()
                             }) {
                                 Text("See All")
                                     .font(.system(size: 14))
@@ -108,9 +106,7 @@ struct AppointmentDashboardView: View {
                         VStack(spacing: 16) {
                             ForEach(viewModel.isSearching
                                     ? viewModel.filteredDoctors
-                                    : (showAllDoctors
-                                       ? Array(viewModel.recentConsultations.prefix(7))
-                                       : Array(viewModel.recentConsultations.prefix(2)))
+                                    : viewModel.displayedDoctors
                             ) { doctor in
                                 DoctorCard(doctor: doctor) {
                                     viewModel.bookAppointment(for: doctor)
@@ -124,7 +120,11 @@ struct AppointmentDashboardView: View {
                 // MARK: - Back Button (Top Left)
                 VStack {
                     HStack {
-                        Button(action: { dismiss() }) {
+                        Button(action: { 
+                            if !tabManager.navigationPath.isEmpty {
+                                tabManager.navigationPath.removeLast()
+                            }
+                        }) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(.black)
@@ -151,18 +151,13 @@ struct AppointmentDashboardView: View {
                 }
             }
             .navigationBarHidden(true)
-            .navigationDestination(isPresented: $navigateToSpecialtyTab) {
-                if let specialty = selectedSpecialty {
-                    SpecialtyTabView(preselectedSpecialty: specialty)
-                }
-            }
             
             // MARK: - Tab Bar
             CustomTabBar(activeTab: Binding(
                 get: { .none },
                 set: { newTab in
                     tabManager.activeTab = newTab
-                    dismiss()
+                    tabManager.popToRoot()
                 }
             ))
             .shadow(color: .black.opacity(0.15), radius: 10)
@@ -171,13 +166,6 @@ struct AppointmentDashboardView: View {
         .ignoresSafeArea(edges: .bottom)
         .onAppear {
             tabManager.activeTab = .none
-            tabManager.dismissSecondaryPage = { dismiss() }
-        }
-        .onDisappear {
-            tabManager.dismissSecondaryPage = nil
-        }
-        .onChange(of: tabManager.popToRootTrigger) { _, _ in
-            dismiss()
         }
     }
 }

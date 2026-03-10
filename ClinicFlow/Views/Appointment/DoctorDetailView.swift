@@ -10,6 +10,7 @@ import SwiftUI
 struct DoctorDetailView: View {
     @StateObject private var viewModel: DoctorDetailViewModel
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var tabManager: TabBarViewModel
     
     init(doctor: Doctor) {
         _viewModel = StateObject(wrappedValue: DoctorDetailViewModel(doctor: doctor))
@@ -114,7 +115,11 @@ struct DoctorDetailView: View {
                         Spacer()
                         
                         Button(action: {
-                            viewModel.bookAppointment()
+                            if viewModel.isFirstTimeBooking() {
+                                tabManager.navigationPath.append(NavigationRoute.addPatient(viewModel.doctor))
+                            } else {
+                                tabManager.navigationPath.append(NavigationRoute.bookAppointment(viewModel.doctor))
+                            }
                         }) {
                             Text("Book")
                                 .font(.system(size: 18, weight: .semibold))
@@ -145,7 +150,9 @@ struct DoctorDetailView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        dismiss()
+                        if !tabManager.navigationPath.isEmpty {
+                            tabManager.navigationPath.removeLast()
+                        }
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -178,13 +185,6 @@ struct DoctorDetailView: View {
             
         }
         .navigationBarHidden(true)
-        
-        .navigationDestination(isPresented: $viewModel.navigateToBooking) {
-            BookAppointmentView(doctor: viewModel.doctor)
-        }
-        .navigationDestination(isPresented: $viewModel.navigateToAddPatient) {
-            AddPatientView(doctor: viewModel.doctor)
-        }
     }
 }
 

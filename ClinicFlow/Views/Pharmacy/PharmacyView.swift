@@ -74,7 +74,7 @@ struct PharmacyView: View {
                     Button(action: {
                         viewModel.completePharmacy()
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     }) {
                         Text("Complete Pharmacy")
                             .font(.system(size: 16, weight: .semibold))
@@ -123,7 +123,7 @@ struct PharmacyView: View {
                 HStack {
                     Button(action: {
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -163,7 +163,7 @@ struct PharmacyView: View {
                         viewModel.cancelToken()
                         tabManager.isTabBarHidden = false
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     },
                     onDismiss: {
                         tabManager.isTabBarHidden = false
@@ -175,10 +175,6 @@ struct PharmacyView: View {
         .navigationBarHidden(true)
         .onAppear {
             tabManager.activeTab = .none
-            tabManager.dismissSecondaryPage = { dismiss() }
-        }
-        .onDisappear {
-            tabManager.dismissSecondaryPage = nil
         }
         .alert("Medicines Ready!", isPresented: $viewModel.showCompletedAlert) {
             Button("OK", role: .none) {

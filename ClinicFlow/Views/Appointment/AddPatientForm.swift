@@ -10,12 +10,10 @@ import SwiftUI
 struct AddPatientView: View {
     @StateObject private var viewModel = AddPatientViewModel()
     @Environment(\.dismiss) var dismiss
-    //@EnvironmentObject var tabManager: TabBarManager
+    @EnvironmentObject var tabManager: TabBarViewModel
     
     var onPatientAdded: ((Patient) -> Void)?
     var doctor: Doctor
-    @State private var navigateToBooking = false
-    @State private var newlyAddedPatient: Patient?
     
     var body: some View {
         ZStack {
@@ -174,9 +172,8 @@ struct AddPatientView: View {
                     VStack(spacing: 16) {
                         Button(action: {
                             if let patient = viewModel.addPatient() {
-                                newlyAddedPatient = patient
                                 onPatientAdded?(patient)
-                                navigateToBooking = true
+                                tabManager.navigationPath.append(NavigationRoute.bookAppointment(doctor))
                             }
                         }) {
                             Text("Add Patient")
@@ -193,7 +190,9 @@ struct AddPatientView: View {
                         // MARK: - Cancel Button
                         
                         Button(action: {
-                            dismiss()
+                            if !tabManager.navigationPath.isEmpty {
+                                tabManager.navigationPath.removeLast()
+                            }
                         }) {
                             Text("Cancel")
                                 .font(.system(size: 18, weight: .semibold))
@@ -220,7 +219,9 @@ struct AddPatientView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        dismiss()
+                        if !tabManager.navigationPath.isEmpty {
+                            tabManager.navigationPath.removeLast()
+                        }
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -257,10 +258,6 @@ struct AddPatientView: View {
 //                .shadow(color: .black.opacity(0.15), radius: 10)
 //        }
         .navigationBarHidden(true)
-        
-        .navigationDestination(isPresented: $navigateToBooking) {
-            BookAppointmentView(doctor: doctor)
-        }
         
         .alert("Error", isPresented: $viewModel.showValidationError) {
             Button("OK", role: .cancel) {}

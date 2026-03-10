@@ -92,7 +92,7 @@ struct LabView: View {
                     Button(action: {
                         viewModel.completeLab()
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     }) {
                         Text("Complete Labortary")
                             .font(.system(size: 16, weight: .semibold))
@@ -140,7 +140,7 @@ struct LabView: View {
                 HStack {
                     Button(action: {
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -180,7 +180,7 @@ struct LabView: View {
                         viewModel.cancelToken()
                         tabManager.isTabBarHidden = false
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     },
                     onDismiss: {
                         tabManager.isTabBarHidden = false
@@ -192,10 +192,6 @@ struct LabView: View {
         .navigationBarHidden(true)
         .onAppear {
             tabManager.activeTab = .none
-            tabManager.dismissSecondaryPage = { dismiss() }
-        }
-        .onDisappear {
-            tabManager.dismissSecondaryPage = nil
         }
         .alert("Report is Ready!", isPresented: $viewModel.showCompletedAlert) {
             Button("OK", role: .none) {

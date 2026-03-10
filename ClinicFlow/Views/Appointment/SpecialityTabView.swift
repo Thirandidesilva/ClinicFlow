@@ -98,7 +98,11 @@ struct SpecialtyTabView: View {
                 // MARK: - Back Button
                 VStack {
                     HStack {
-                        Button(action: { dismiss() }) {
+                        Button(action: { 
+                            if !tabManager.navigationPath.isEmpty {
+                                tabManager.navigationPath.removeLast()
+                            }
+                        }) {
                             Image(systemName: "chevron.left")
                                 .font(.system(size: 20, weight: .semibold))
                                 .foregroundColor(.black)
@@ -133,7 +137,7 @@ struct SpecialtyTabView: View {
                     get: { .none },
                     set: { newTab in
                         tabManager.activeTab = newTab
-                        dismiss()
+                        tabManager.popToRoot()
                     }
                 )
             )
@@ -144,16 +148,6 @@ struct SpecialtyTabView: View {
 
         .onAppear {
             tabManager.activeTab = .none
-            tabManager.dismissSecondaryPage = {
-                dismiss()
-            }
-        }
-
-        .onDisappear {
-            tabManager.dismissSecondaryPage = nil
-        }
-        .onChange(of: tabManager.popToRootTrigger) { _, _ in
-            dismiss()
         }
     }
 }

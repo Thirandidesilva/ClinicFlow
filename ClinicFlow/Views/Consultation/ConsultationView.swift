@@ -13,7 +13,6 @@ struct ConsultationView: View {
     @EnvironmentObject var tabManager: TabBarViewModel
     
     var onComplete: (() -> Void)? = nil
-    @State private var navigateToHome = false
     
     var body: some View {
         ZStack {
@@ -100,7 +99,8 @@ struct ConsultationView: View {
                     
                     // MARK: - Complete Session Button
                     Button(action: {
-                        navigateToHome = true
+                        tabManager.activeTab = .home
+                        tabManager.popToRoot()
                     }) {
                         Text("Complete Session")
                             .font(.system(size: 16, weight: .semibold))
@@ -124,7 +124,7 @@ struct ConsultationView: View {
                 HStack {
                     Button(action: {
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -157,21 +157,9 @@ struct ConsultationView: View {
         }
         .navigationBarHidden(true)
         
-//        NavigationLink(destination: ConsultationView(onComplete: {
-//            navigationPath = NavigationPath()  // ← clears entire stack back to root
-//        }))
-        
-        .navigationDestination(isPresented: $navigateToHome) {
-            HomeView()
-        }
-        
         .onAppear {
-                    tabManager.activeTab = .none                   // 👈 deselect tabs
-                    tabManager.dismissSecondaryPage = { dismiss() } // 👈 register dismiss
-                }
-                .onDisappear {
-                    tabManager.dismissSecondaryPage = nil           // 👈 clean up
-                }
+            tabManager.activeTab = .none
+        }
         
         .alert(isPresented: $viewModel.showAlert) {
             Alert(
@@ -180,7 +168,6 @@ struct ConsultationView: View {
                 dismissButton: .default(Text("OK"))
             )
         }
-//        }
     }
 }
 

@@ -33,14 +33,14 @@ class DoctorDetailViewModel: ObservableObject {
     // MARK: - Book Appointment
     func bookAppointment() {
         if isFirstTimeBooking() {
-            navigateToAddPatient = true
+            // Navigation handled by view
         } else {
-            navigateToBooking = true
+            // Navigation handled by view
         }
     }
 
     // MARK: - First Time Booking Check
-    private func isFirstTimeBooking() -> Bool {
+    func isFirstTimeBooking() -> Bool {
         // Checks UserDefaults to see if user has ever saved a patient before
         return !UserDefaults.standard.bool(forKey: "hasAddedPatient")
     }

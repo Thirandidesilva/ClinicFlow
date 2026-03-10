@@ -15,6 +15,13 @@ class AppointmentViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var selectedSpecialty: Specialty? = nil
     @Published var isSearching: Bool = false
+    @Published var showAllDoctors: Bool = false
+    
+    var displayedDoctors: [Doctor] {
+        showAllDoctors
+            ? Array(recentConsultations.prefix(7))
+            : Array(recentConsultations.prefix(2))
+    }
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -85,5 +92,10 @@ class AppointmentViewModel: ObservableObject {
     func bookAppointment(for doctor: Doctor) {
         print("Booking appointment with \(doctor.name)")
         // TODO: Navigate to booking page
+    }
+    
+    // MARK: - Show All Doctors
+    func expandDoctorList() {
+        showAllDoctors = true
     }
 }

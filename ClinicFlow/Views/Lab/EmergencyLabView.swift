@@ -125,7 +125,7 @@ struct EmergencyLabView: View {
                     Button(action: {
                         viewModel.completeLab()
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     }) {
                         Text("Mark Emergency Lab Complete")
                             .font(.system(size: 16, weight: .semibold))
@@ -150,7 +150,7 @@ struct EmergencyLabView: View {
                 HStack {
                     Button(action: {
                         tabManager.activeTab = .home
-                        dismiss()
+                        tabManager.popToRoot()
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -185,10 +185,6 @@ struct EmergencyLabView: View {
         .navigationBarHidden(true)
         .onAppear {
             tabManager.activeTab = .none
-            tabManager.dismissSecondaryPage = { dismiss() }
-        }
-        .onDisappear {
-            tabManager.dismissSecondaryPage = nil
         }
         .alert("Report is Ready!", isPresented: $viewModel.showCompletedAlert) {
             Button("OK", role: .none) {

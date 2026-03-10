@@ -12,11 +12,13 @@ class TabBarViewModel: ObservableObject {
     
     @Published var activeTab: TabModel = .home
     @Published var isTabBarHidden: Bool = false
-    @Published var popToRootTrigger: Int = 0
-
-    var dismissSecondaryPage: (() -> Void)?
+    @Published var navigationPath = NavigationPath()
     
     var isSecondaryPage: Bool {
         activeTab == .none
+    }
+    
+    func popToRoot() {
+        navigationPath.removeLast(navigationPath.count)
     }
 }

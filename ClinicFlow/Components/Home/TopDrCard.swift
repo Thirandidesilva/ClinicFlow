@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TopDrCard: View {
     let doctor: Doctor
-    @State private var navigateToDetails = false
+    @EnvironmentObject var tabManager: TabBarViewModel
     
     var body: some View {
         ZStack(alignment: .bottomLeading) {
@@ -29,7 +29,7 @@ struct TopDrCard: View {
                 
                 // Arrow button with gray circle background
                 Button(action: {
-                    navigateToDetails = true
+                    tabManager.navigationPath.append(NavigationRoute.doctorDetail(doctor))
                 }) {
                     ZStack {
                         Circle()
@@ -53,9 +53,6 @@ struct TopDrCard: View {
         }
         .frame(width: 150, height: 220)
         .shadow(color: .black.opacity(0.1), radius: 12, x: 0, y: 4)
-        .navigationDestination(isPresented: $navigateToDetails) {
-            DoctorDetailView(doctor: doctor)
-        }
     }
 }
 

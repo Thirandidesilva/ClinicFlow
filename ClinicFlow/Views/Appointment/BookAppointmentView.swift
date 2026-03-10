@@ -10,8 +10,9 @@ import SwiftUI
 struct BookAppointmentView: View {
     @StateObject private var viewModel: BookAppointmentViewModel
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var tabManager: TabBarViewModel
     @State private var showSuccessMessage = false
-    @State private var navigateToDetails = false
+    @State private var bookedAppointment: AppointmentBooking?
     
     init(doctor: Doctor) {
         _viewModel = StateObject(wrappedValue: BookAppointmentViewModel(doctor: doctor))
@@ -78,6 +79,16 @@ struct BookAppointmentView: View {
                         Button(action: {
                             if viewModel.validateBooking() {
                                 viewModel.bookAppointment()
+                                bookedAppointment = AppointmentBooking(
+                                    appointmentNumber: "#\(Int.random(in: 10...99))",
+                                    doctor: viewModel.doctor,
+                                    patient: viewModel.selectedPatient ?? Patient.samplePatients[0],
+                                    date: Date(),
+                                    time: viewModel.selectedTime,
+                                    estimatedTime: "01.30 PM",
+                                    doctorArrivalTime: "10.30 AM",
+                                    roomNumber: "F1-307"
+                                )
                                 showSuccessMessage = true
                             }
                         }) {
@@ -102,7 +113,9 @@ struct BookAppointmentView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        dismiss()
+                        if !tabManager.navigationPath.isEmpty {
+                            tabManager.navigationPath.removeLast()
+                        }
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -141,31 +154,18 @@ struct BookAppointmentView: View {
         }
         .alert("Success", isPresented: $showSuccessMessage) {
             Button("OK", role: .none) {
-                navigateToDetails = true
+                if let booking = bookedAppointment {
+                    tabManager.navigationPath.append(NavigationRoute.appointmentDetail(booking))
+                }
             }
         } message: {
             Text("Appointment booked successfully!")
         }
-        .navigationDestination(isPresented: $viewModel.navigateToAddPatient) {
-            AddPatientView(
-                onPatientAdded: { newPatient in
-                    viewModel.patients.append(newPatient)
-                    viewModel.selectedPatient = newPatient
-                },
-                doctor: viewModel.doctor
-            )
-        }
-        .navigationDestination(isPresented: $navigateToDetails) {
-            AppointmentDetailsView(booking: AppointmentBooking(
-                appointmentNumber: "#\(Int.random(in: 10...99))",
-                doctor: viewModel.doctor,
-                patient: viewModel.selectedPatient ?? Patient.samplePatients[0],
-                date: Date(),
-                time: viewModel.selectedTime,
-                estimatedTime: "01.30 PM",
-                doctorArrivalTime: "10.30 AM",
-                roomNumber: "F1-307"
-            ))
+        .onChange(of: viewModel.navigateToAddPatient) { _, shouldNavigate in
+            if shouldNavigate {
+                tabManager.navigationPath.append(NavigationRoute.addPatient(viewModel.doctor))
+                viewModel.navigateToAddPatient = false
+            }
         }
     }
 }

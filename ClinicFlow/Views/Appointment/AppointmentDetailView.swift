@@ -10,10 +10,8 @@ import SwiftUI
 struct AppointmentDetailsView: View {
     let booking: AppointmentBooking
     @Environment(\.dismiss) var dismiss
+    @EnvironmentObject var tabManager: TabBarViewModel
     @State private var showCheckInPopup = false
-    @State private var goToConsultation = false
-    //@State private var showCheckInPopup = false
-    //@EnvironmentObject var tabManager: TabBarManager
     
     var body: some View {
         ZStack {
@@ -158,7 +156,9 @@ struct AppointmentDetailsView: View {
             VStack {
                 HStack {
                     Button(action: {
-                        dismiss()
+                        if !tabManager.navigationPath.isEmpty {
+                            tabManager.navigationPath.removeLast()
+                        }
                     }) {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 20, weight: .semibold))
@@ -187,7 +187,7 @@ struct AppointmentDetailsView: View {
                     roomNumber: "F1-307",
                     onCheckIn: {
                         showCheckInPopup = false
-                        goToConsultation = true
+                        tabManager.navigationPath.append(NavigationRoute.consultation)
                     },
                     onCancel: {
                         showCheckInPopup = false
@@ -212,10 +212,6 @@ struct AppointmentDetailsView: View {
 //                .shadow(color: .black.opacity(0.15), radius: 10)
 //        }
         .navigationBarHidden(true)
-        
-        .navigationDestination(isPresented: $goToConsultation) {
-            ConsultationView()
-        }
     }
     
     private func formatDate(_ date: Date) -> String {

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DoctorCard: View {
     
-    @State private var navigateToDetails = false
+    @EnvironmentObject var tabManager: TabBarViewModel
     
     let doctor: Doctor
     let onBook: () -> Void
@@ -36,7 +36,7 @@ struct DoctorCard: View {
                     
                     // Book button
                     Button(action: {
-                        navigateToDetails = true
+                        tabManager.navigationPath.append(NavigationRoute.doctorDetail(doctor))
                     }) {
                         Text("Book")
                             .font(.system(size: 14, weight: .semibold))
@@ -92,11 +92,6 @@ struct DoctorCard: View {
         .clipShape(RoundedRectangle(cornerRadius: 16))
         .shadow(color: .black.opacity(0.08), radius: 8, x: 0, y: 4)
         .padding(.horizontal, 10)
-        
-        .navigationDestination(isPresented: $navigateToDetails) {
-            DoctorDetailView(doctor: doctor)
-        }
-        
     }
 }
 
