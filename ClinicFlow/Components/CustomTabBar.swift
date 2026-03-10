@@ -18,7 +18,7 @@ struct CustomTabBar: View {
             ForEach(TabModel.mainTabs, id: \.rawValue) { tab in
                 Button {
                     if tabManager.activeTab == .none {
-                        tabManager.dismissSecondaryPage?()
+                        tabManager.popToRootTrigger += 1
                     }
                     activeTab = tab
                 } label: {

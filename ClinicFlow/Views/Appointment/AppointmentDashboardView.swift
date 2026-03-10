@@ -157,7 +157,7 @@ struct AppointmentDashboardView: View {
                 }
             }
             
-            // MARK: - Tab Bar (nothing highlighted) 👈 add this
+            // MARK: - Tab Bar
             CustomTabBar(activeTab: Binding(
                 get: { .none },
                 set: { newTab in
@@ -171,12 +171,13 @@ struct AppointmentDashboardView: View {
         .ignoresSafeArea(edges: .bottom)
         .onAppear {
             tabManager.activeTab = .none
-            tabManager.dismissSecondaryPage = {
-                dismiss()
-            }
+            tabManager.dismissSecondaryPage = { dismiss() }
         }
         .onDisappear {
             tabManager.dismissSecondaryPage = nil
+        }
+        .onChange(of: tabManager.popToRootTrigger) { _, _ in
+            dismiss()
         }
     }
 }

@@ -5,13 +5,6 @@
 //  Created by M H T U De Silva on 2026-02-26.
 //
 
-//
-//  SpecialityTabView.swift
-//  ClinicFlow
-//
-//  Created by M H T U De Silva on 2026-02-26.
-//
-
 import SwiftUI
 
 struct SpecialtyTabView: View {
@@ -158,6 +151,9 @@ struct SpecialtyTabView: View {
 
         .onDisappear {
             tabManager.dismissSecondaryPage = nil
+        }
+        .onChange(of: tabManager.popToRootTrigger) { _, _ in
+            dismiss()
         }
     }
 }

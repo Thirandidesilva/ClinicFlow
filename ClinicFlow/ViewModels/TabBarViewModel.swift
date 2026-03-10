@@ -11,8 +11,9 @@ import Combine
 class TabBarViewModel: ObservableObject {
     
     @Published var activeTab: TabModel = .home
-    @Published var isTabBarHidden: Bool = false 
-    
+    @Published var isTabBarHidden: Bool = false
+    @Published var popToRootTrigger: Int = 0
+
     var dismissSecondaryPage: (() -> Void)?
     
     var isSecondaryPage: Bool {
