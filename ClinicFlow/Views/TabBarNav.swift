@@ -8,32 +8,73 @@
 import SwiftUI
 
 struct TabBarNav: View {
-    @State private var activeTab: TabModel = .home
+    @StateObject private var tabManager = TabBarViewModel()
 
     var body: some View {
         if #available(iOS 18, *) {
-            TabView(selection: $activeTab) {
-                Tab(value: .home) {
-                    Text("Home")
-                        .toolbarVisibility(.hidden, for: .tabBar)
+            ZStack(alignment: .bottom) {
+
+                NavigationStack(path: $tabManager.navigationPath) {
+                    TabView(selection: $tabManager.activeTab) {
+                        Tab(value: .home) {
+                            HomeView()
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
+                        Tab(value: .location) {
+                            Text("Map")
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
+                        Tab(value: .activity) {
+                            Text("activity")
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
+                        Tab(value: .account) {
+                            Text("account")
+                                .toolbarVisibility(.hidden, for: .tabBar)
+                        }
+                    }
+                    .toolbarVisibility(.hidden, for: .tabBar)
+                    .navigationDestination(for: NavigationRoute.self) { route in
+                        switch route {
+                        case .consultation:
+                            ConsultationView()
+                        case .appointmentDashboard:
+                            AppointmentDashboardView()
+                        case .pharmacy:
+                            PharmacyView()
+                        case .lab:
+                            LabView()
+                        case .emergencyLab:
+                            EmergencyLabView()
+                        case .specialtyTab(let specialty):
+                            SpecialtyTabView(preselectedSpecialty: specialty)
+                        case .doctorDetail(let doctor):
+                            DoctorDetailView(doctor: doctor)
+                        case .bookAppointment(let doctor):
+                            BookAppointmentView(doctor: doctor)
+                        case .addPatient(let doctor):
+                            AddPatientView(doctor: doctor)
+                        case .appointmentDetail(let booking):
+                            AppointmentDetailsView(booking: booking)
+                        }
+                    }
                 }
-                Tab(value: .location) {
-                    MapView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
+                .safeAreaInset(edge: .bottom) {
+                    Color.clear.frame(height: 80)
                 }
-                Tab(value: .activity) {
-                    ActivityView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
+
+//                CustomTabBar(activeTab: $tabManager.activeTab)
+//                    .shadow(color: .black.opacity(0.15), radius: 10)
+//                    .padding(.bottom, 8)
+                
+                if !tabManager.isTabBarHidden {
+                    CustomTabBar(activeTab: $tabManager.activeTab)
+                        .shadow(color: .black.opacity(0.15), radius: 10)
+                        .padding(.bottom, 8)
                 }
-                Tab(value: .account) {
-                    AccountView()
-                        .toolbarVisibility(.hidden, for: .tabBar)
-                }
-            }
-            .overlay(alignment: .bottom) {
-                CustomTabBar(activeTab: $activeTab)
             }
             .ignoresSafeArea(edges: .bottom)
+            .environmentObject(tabManager)
         }
     }
 }
@@ -51,4 +92,5 @@ extension UIView {
 
 #Preview {
     TabBarNav()
+        .environmentObject(TabBarViewModel())
 }

@@ -11,29 +11,34 @@ struct CustomTabBar: View {
     var activeForeground: Color = .white
     var activeBackground: Color = Color(hex: "0930A6")
     @Binding var activeTab: TabModel
+    @EnvironmentObject var tabManager: TabBarViewModel
 
     var body: some View {
         HStack(spacing: 0) {
-            ForEach(TabModel.allCases, id: \.rawValue) { tab in
+            ForEach(TabModel.mainTabs, id: \.rawValue) { tab in
                 Button {
+                    if tabManager.activeTab == .none {
+                        tabManager.popToRoot()
+                    }
                     activeTab = tab
                 } label: {
-                    HStack(spacing: 6) {
+                    HStack(spacing: 2) {
                         Image(tab.icon)
                             .renderingMode(.template)
                             .font(.title.bold())
-                            .frame(width: 24, height: 24)
+                            .frame(width: 30, height: 30)
 
                         if activeTab == tab {
                             Text(tab.title)
-                                .font(.subheadline)
+                                .font(.caption)
                                 .fontWeight(.semibold)
-                                .fixedSize() // never truncate
+                                .lineLimit(1)
                         }
                     }
-                    .padding(.vertical, 11)
-                    .padding(.horizontal, 14)
+                    .padding(.vertical, 8)
                     .foregroundStyle(activeTab == tab ? activeForeground : .black)
+                    .padding(.leading, 20)
+                    .padding(.trailing, 15)
                     .background {
                         if activeTab == tab {
                             Capsule()
@@ -42,23 +47,11 @@ struct CustomTabBar: View {
                     }
                 }
                 .buttonStyle(.plain)
-                // inactive tabs share remaining space equally
-                if activeTab != tab {
-                    Spacer()
-                }
             }
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal, 16)
-        .padding(.top, 12)
-        .padding(.bottom, 23)
+        .padding(.top, 10)
         .background(Color.white)
-        .overlay(
-            Rectangle()
-                .frame(height: 1)
-                .foregroundColor(Color(hex: "E5E5E5")),
-            alignment: .top
-        )
     }
 }
 

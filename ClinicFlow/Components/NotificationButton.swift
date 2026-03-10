@@ -11,7 +11,6 @@ import SwiftUI
 
 struct NotificationButton: View {
     var action: () -> Void = {}
-
     var body: some View {
         VStack(spacing: 0) {
             HStack {
