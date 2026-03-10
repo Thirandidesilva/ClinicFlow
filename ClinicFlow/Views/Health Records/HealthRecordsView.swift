@@ -12,8 +12,7 @@ struct HealthRecordsView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
 
                 // MARK: Fixed Header
                 ZStack {
@@ -68,7 +67,6 @@ struct HealthRecordsView: View {
             }
             .background(Color(hex: "F5F5F5").ignoresSafeArea())
             .navigationBarHidden(true)
-        }
     }
 }
 

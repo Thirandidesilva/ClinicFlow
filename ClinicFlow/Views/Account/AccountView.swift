@@ -13,8 +13,7 @@ struct AccountView: View {
     @State private var navigateToSetup = false
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
+        VStack(spacing: 0) {
 
                 // MARK: Fixed Header
                 ZStack(alignment: .trailing) {
@@ -174,8 +173,6 @@ struct AccountView: View {
             .navigationDestination(isPresented: $navigateToSetup) {
                 SetupView()
             }
-        }
-
         // MARK: Logout Bottom Sheet
         .sheet(isPresented: $showLogoutSheet) {
             LogoutSheetView(
