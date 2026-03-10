@@ -44,7 +44,7 @@ struct OtherRecordsView: View {
 
                     VStack(spacing: 0) {
                         ForEach(filteredFamily) { patient in
-                            NavigationLink(destination: OtherPatientRecordView(patient: patient)) {
+                            NavigationLink(value: NavigationRoute.otherPatientRecord(patient)) {
                                 PatientListRow(patient: patient)
                             }
                             if patient.id != filteredFamily.last?.id {
@@ -66,7 +66,7 @@ struct OtherRecordsView: View {
 
                     VStack(spacing: 0) {
                         ForEach(filteredOthers) { patient in
-                            NavigationLink(destination: OtherPatientRecordView(patient: patient)) {
+                            NavigationLink(value: NavigationRoute.otherPatientRecord(patient)) {
                                 PatientListRow(patient: patient)
                             }
                             if patient.id != filteredOthers.last?.id {

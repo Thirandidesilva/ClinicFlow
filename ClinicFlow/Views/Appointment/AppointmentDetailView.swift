@@ -17,18 +17,17 @@ struct AppointmentDetailsView: View {
         ZStack {
             Color.white.ignoresSafeArea()
             
-            //ScrollView(.vertical, showsIndicators: false) {
-                VStack(alignment: .leading, spacing: 24) {
-                    
-                    // MARK: - Header
-                    Text("Appointment Details")
-                        .font(.system(size: 24, weight: .bold))
-                        .foregroundColor(.black)
-                        .padding(.horizontal, 80)
-                        .padding(.top, 6)
-                    
-                    // MARK: - Consultation Details
-                    ScrollView(.vertical, showsIndicators: false) {
+            VStack(alignment: .leading, spacing: 24) {
+                
+                // MARK: - Header
+                Text("Appointment Details")
+                    .font(.system(size: 24, weight: .bold))
+                    .foregroundColor(.black)
+                    .padding(.horizontal, 80)
+                    .padding(.top, 6)
+                
+                // MARK: - Consultation Details
+                ScrollView(.vertical, showsIndicators: false) {
                     VStack(alignment: .leading, spacing: 16) {
                         Text("Consultation Details")
                             .font(.system(size: 16, weight: .semibold))
@@ -68,7 +67,6 @@ struct AppointmentDetailsView: View {
                         Text("Appointment Number")
                             .font(.system(size: 16, weight: .regular))
                             .foregroundColor(.black)
-                            
                         
                         Text(": ")
                             .font(.system(size: 16, weight: .medium))
@@ -79,16 +77,17 @@ struct AppointmentDetailsView: View {
                             .foregroundColor(Color(hex: "0930A6"))
                     }
                     .padding(.vertical, 20)
+                    .padding(.horizontal, 24)
                     
                     // MARK: - Appointment Info Card
                     VStack(alignment: .leading, spacing: 0) {
-                        InfoRow(label: "Date", value: formatDate(booking.date))
+                        AppointmentInfoRow(label: "Date", value: formatDate(booking.date))
                         Divider()
-                        InfoRow(label: "Estimated Time", value: booking.estimatedTime)
+                        AppointmentInfoRow(label: "Estimated Time", value: booking.estimatedTime)
                         Divider()
-                        InfoRow(label: "Doctor Arrival Time", value: booking.doctorArrivalTime)
+                        AppointmentInfoRow(label: "Doctor Arrival Time", value: booking.doctorArrivalTime)
                         Divider()
-                        InfoRow(label: "Room Number", value: booking.roomNumber)
+                        AppointmentInfoRow(label: "Room Number", value: booking.roomNumber)
                     }
                     .padding(.bottom, 30)
                     .padding(20)
@@ -110,11 +109,11 @@ struct AppointmentDetailsView: View {
                             .padding(.top, 20)
                         
                         VStack(alignment: .leading, spacing: 0) {
-                            InfoRow(label: "Patient Name", value: booking.patient.name)
+                            AppointmentInfoRow(label: "Patient Name", value: booking.patient.name)
                             Divider()
-                            InfoRow(label: "Patient Age", value: "\(booking.patient.age) yrs")
+                            AppointmentInfoRow(label: "Patient Age", value: "\(booking.patient.age) yrs")
                             Divider()
-                            InfoRow(label: "Contact Number", value: booking.patient.contactNumber)
+                            AppointmentInfoRow(label: "Contact Number", value: booking.patient.contactNumber)
                         }
                         .padding(20)
                         .background(
@@ -130,7 +129,6 @@ struct AppointmentDetailsView: View {
                     
                     // MARK: - Check In Button
                     Button(action: {
-                        // Navigate to check-in or home
                         showCheckInPopup = true
                     }) {
                         Text("Check In")
@@ -147,9 +145,6 @@ struct AppointmentDetailsView: View {
                     .padding(.top, 60)
                     .padding(.bottom, 60)
                 }
-                //MARK: - Cancel Button
-                    
-                    
             }
             
             // MARK: - Back Button (Top Left)
@@ -181,10 +176,10 @@ struct AppointmentDetailsView: View {
             // MARK: - CheckIn Confirm Popup
             if showCheckInPopup {
                 CheckInConfirmationPopup(
-                    date: "1st of March 2026",
-                    time: "1.30 PM",
-                    doctorName: "Elizabeth Blackwell",
-                    roomNumber: "F1-307",
+                    date: formatDate(booking.date),
+                    time: booking.estimatedTime,
+                    doctorName: booking.doctor.name,
+                    roomNumber: booking.roomNumber,
                     onCheckIn: {
                         showCheckInPopup = false
                         tabManager.navigationPath.append(NavigationRoute.consultation)
@@ -206,11 +201,6 @@ struct AppointmentDetailsView: View {
                 Spacer()
             }
         }
-//        .overlay(alignment: .bottom) {
-//            CustomTabBar(activeTab: $tabManager.activeTab)
-//                .padding(.bottom, -20)
-//                .shadow(color: .black.opacity(0.15), radius: 10)
-//        }
         .navigationBarHidden(true)
     }
     
@@ -221,7 +211,8 @@ struct AppointmentDetailsView: View {
     }
 }
 
-struct InfoRow: View {
+// MARK: - Renamed to AppointmentInfoRow to avoid redeclaration conflict
+struct AppointmentInfoRow: View {
     let label: String
     let value: String
     
@@ -249,11 +240,11 @@ struct InfoRow: View {
             doctor: Doctor.sampleDoctors[0],
             patient: Patient.samplePatients[0],
             date: Date(),
-            time: "Morning",
+            time: "10.30 AM",
             estimatedTime: "01.30 PM",
             doctorArrivalTime: "10.30 AM",
             roomNumber: "F1-307"
         )
     )
-    //.environmentObject(TabBarManager())
+    .environmentObject(TabBarViewModel())
 }

@@ -12,8 +12,7 @@ struct ActivityView: View {
     @StateObject private var viewModel = ActivityViewModel()
 
     var body: some View {
-        NavigationStack {
-            ZStack {
+        ZStack {
                 Color(hex: "FFFFFF")
                     .ignoresSafeArea()
 
@@ -96,7 +95,6 @@ struct ActivityView: View {
                 .presentationCornerRadius(28)
                 .presentationBackground(.white)
             }
-        }
     }
 }
 

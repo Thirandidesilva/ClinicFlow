@@ -9,6 +9,7 @@ import SwiftUI
 
 struct YourRecordsView: View {
     @ObservedObject var viewModel: HealthRecordViewModel
+    @State private var showEditRecord = false
 
     var body: some View {
         ScrollView(showsIndicators: false) {
@@ -39,9 +40,7 @@ struct YourRecordsView: View {
                     Spacer()
 
                     // Edit button navigates to EditRecordView
-                    NavigationLink(destination: EditRecordView(
-                        viewModel: EditRecordViewModel(healthRecordViewModel: viewModel)
-                    )) {
+                    Button { showEditRecord = true } label: {
                         Circle()
                             .fill(Color.white.opacity(0.2))
                             .frame(width: 36, height: 36)
@@ -79,6 +78,9 @@ struct YourRecordsView: View {
             .padding(.top, 8)
         }
         .background(Color(hex: "F5F5F5"))
+        .fullScreenCover(isPresented: $showEditRecord) {
+            EditRecordView(viewModel: EditRecordViewModel(healthRecordViewModel: viewModel))
+        }
     }
 }
 

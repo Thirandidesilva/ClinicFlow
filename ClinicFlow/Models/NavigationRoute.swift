@@ -10,6 +10,8 @@ import SwiftUI
 enum NavigationRoute: Hashable {
     case consultation
     case appointmentDashboard
+    case healthRecords
+    case otherPatientRecord(OtherPatient)
     case pharmacy
     case lab
     case emergencyLab
@@ -24,6 +26,7 @@ enum NavigationRoute: Hashable {
         switch (lhs, rhs) {
         case (.consultation, .consultation),
              (.appointmentDashboard, .appointmentDashboard),
+             (.healthRecords, .healthRecords),
              (.pharmacy, .pharmacy),
              (.lab, .lab),
              (.emergencyLab, .emergencyLab):
@@ -36,6 +39,8 @@ enum NavigationRoute: Hashable {
             return lhsDoctor.id == rhsDoctor.id
         case (.addPatient(let lhsDoctor), .addPatient(let rhsDoctor)):
             return lhsDoctor.id == rhsDoctor.id
+        case (.otherPatientRecord(let lhs), .otherPatientRecord(let rhs)):
+            return lhs.id == rhs.id
         case (.appointmentDetail(let lhsBooking), .appointmentDetail(let rhsBooking)):
             return lhsBooking.appointmentNumber == rhsBooking.appointmentNumber
         default:
@@ -49,6 +54,11 @@ enum NavigationRoute: Hashable {
             hasher.combine("consultation")
         case .appointmentDashboard:
             hasher.combine("appointmentDashboard")
+        case .healthRecords:
+            hasher.combine("healthRecords")
+        case .otherPatientRecord(let patient):
+            hasher.combine("otherPatientRecord")
+            hasher.combine(patient.id)
         case .pharmacy:
             hasher.combine("pharmacy")
         case .lab:
