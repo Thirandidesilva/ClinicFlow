@@ -11,6 +11,9 @@ struct AccountView: View {
     @StateObject private var viewModel = AccountViewModel()
     @State private var showLogoutSheet = false
     @State private var navigateToSetup = false
+    @State private var showEditName = false
+    @State private var showEditPhone = false
+    @State private var showEditEmail = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -77,17 +80,17 @@ struct AccountView: View {
                                 .padding(.bottom, 8)
 
                             VStack(spacing: 0) {
-                                NavigationLink(destination: EditNameView(viewModel: EditNameViewModel(accountViewModel: viewModel))) {
+                                Button { showEditName = true } label: {
                                     InfoRow(text: viewModel.fullName)
                                 }
                                 Divider().padding(.leading, 16)
 
-                                NavigationLink(destination: EditPhoneView(viewModel: EditPhoneViewModel(accountViewModel: viewModel))) {
+                                Button { showEditPhone = true } label: {
                                     InfoRow(text: viewModel.phoneNumber)
                                 }
                                 Divider().padding(.leading, 16)
 
-                                NavigationLink(destination: EditEmailView(viewModel: EditEmailViewModel(accountViewModel: viewModel))) {
+                                Button { showEditEmail = true } label: {
                                     InfoRow(text: viewModel.email)
                                 }
                             }
@@ -122,7 +125,7 @@ struct AccountView: View {
                         .background(Color(hex: "F5F5F5"))
 
                         // MARK: Health Records
-                        NavigationLink(destination: HealthRecordsView()) {
+                        NavigationLink(value: NavigationRoute.healthRecords) {
                             HStack(spacing: 12) {
                                 Image("icn_healthcross")
                                     .resizable()
@@ -168,11 +171,20 @@ struct AccountView: View {
             }
             .background(Color(hex: "F5F5F5").ignoresSafeArea())
             .navigationBarHidden(true)
-
             // MARK: Navigate to Setup after logout
             .navigationDestination(isPresented: $navigateToSetup) {
                 SetupView()
             }
+        // MARK: Edit Sheets
+        .fullScreenCover(isPresented: $showEditName) {
+            EditNameView(viewModel: EditNameViewModel(accountViewModel: viewModel))
+        }
+        .fullScreenCover(isPresented: $showEditPhone) {
+            EditPhoneView(viewModel: EditPhoneViewModel(accountViewModel: viewModel))
+        }
+        .fullScreenCover(isPresented: $showEditEmail) {
+            EditEmailView(viewModel: EditEmailViewModel(accountViewModel: viewModel))
+        }
         // MARK: Logout Bottom Sheet
         .sheet(isPresented: $showLogoutSheet) {
             LogoutSheetView(

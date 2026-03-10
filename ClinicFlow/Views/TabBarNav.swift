@@ -35,27 +35,33 @@ struct TabBarNav: View {
                     }
                     .toolbarVisibility(.hidden, for: .tabBar)
                     .navigationDestination(for: NavigationRoute.self) { route in
-                        switch route {
-                        case .consultation:
-                            ConsultationView()
-                        case .appointmentDashboard:
-                            AppointmentDashboardView()
-                        case .pharmacy:
-                            PharmacyView()
-                        case .lab:
-                            LabView()
-                        case .emergencyLab:
-                            EmergencyLabView()
-                        case .specialtyTab(let specialty):
-                            SpecialtyTabView(preselectedSpecialty: specialty)
-                        case .doctorDetail(let doctor):
-                            DoctorDetailView(doctor: doctor)
-                        case .bookAppointment(let doctor):
-                            BookAppointmentView(doctor: doctor)
-                        case .addPatient(let doctor):
-                            AddPatientView(doctor: doctor)
-                        case .appointmentDetail(let booking):
-                            AppointmentDetailsView(booking: booking)
+                        Group {
+                            switch route {
+                            case .consultation:
+                                ConsultationView()
+                            case .appointmentDashboard:
+                                AppointmentDashboardView()
+                            case .healthRecords:
+                                HealthRecordsView()
+                            case .otherPatientRecord(let patient):
+                                OtherPatientRecordView(patient: patient)
+                            case .pharmacy:
+                                PharmacyView()
+                            case .lab:
+                                LabView()
+                            case .emergencyLab:
+                                EmergencyLabView()
+                            case .specialtyTab(let specialty):
+                                SpecialtyTabView(preselectedSpecialty: specialty)
+                            case .doctorDetail(let doctor):
+                                DoctorDetailView(doctor: doctor)
+                            case .bookAppointment(let doctor):
+                                BookAppointmentView(doctor: doctor)
+                            case .addPatient(let doctor):
+                                AddPatientView(doctor: doctor)
+                            case .appointmentDetail(let booking):
+                                AppointmentDetailsView(booking: booking)
+                            }
                         }
                     }
                 }
