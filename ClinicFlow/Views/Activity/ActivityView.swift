@@ -10,6 +10,7 @@ import SwiftUI
 struct ActivityView: View {
 
     @StateObject private var viewModel = ActivityViewModel()
+    @EnvironmentObject var tabManager: TabBarViewModel
 
     var body: some View {
         ZStack {
@@ -42,9 +43,15 @@ struct ActivityView: View {
                                         .padding(.top, 60)
                                 } else {
                                     ForEach(viewModel.upcomingBookings) { booking in
-                                        UpcomingBookingCard(booking: booking) {
-                                            viewModel.requestCancel(booking: booking)
-                                        }
+                                        UpcomingBookingCard(
+                                            booking: booking,
+                                            onCancelTap: { viewModel.requestCancel(booking: booking) },
+                                            onViewDetailsTap: {
+                                                if let apptBooking = booking.appointmentBooking {
+                                                    tabManager.navigationPath.append(NavigationRoute.appointmentDetail(apptBooking))
+                                                }
+                                            }
+                                        )
                                     }
                                 }
 
@@ -183,6 +190,7 @@ struct DoctorRowHeader: View {
 struct UpcomingBookingCard: View {
     let booking: BookingModel
     let onCancelTap: () -> Void
+    let onViewDetailsTap: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 14) {
@@ -204,9 +212,7 @@ struct UpcomingBookingCard: View {
                 }
 
                 // View Details
-                NavigationLink {
-                    Text("Navigate to details page")
-                } label: {
+                Button(action: onViewDetailsTap) {
                     Text("View Details")
                         .font(.subheadline)
                         .fontWeight(.medium)
@@ -439,4 +445,5 @@ struct AddReviewSheet: View {
 
 #Preview {
     ActivityView()
+        .environmentObject(TabBarViewModel())
 }

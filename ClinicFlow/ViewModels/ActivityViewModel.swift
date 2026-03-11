@@ -22,6 +22,21 @@ struct BookingModel: Identifiable {
     let reviewCount: Int
     let imageName: String
     let tab: BookingTab
+    let appointmentBooking: AppointmentBooking?
+
+    init(doctorName: String, speciality: String, date: String, time: String,
+         rating: Double, reviewCount: Int, imageName: String, tab: BookingTab,
+         appointmentBooking: AppointmentBooking? = nil) {
+        self.doctorName = doctorName
+        self.speciality = speciality
+        self.date = date
+        self.time = time
+        self.rating = rating
+        self.reviewCount = reviewCount
+        self.imageName = imageName
+        self.tab = tab
+        self.appointmentBooking = appointmentBooking
+    }
 }
 
 // MARK: - ViewModel
@@ -49,7 +64,31 @@ class ActivityViewModel: ObservableObject {
             rating: 5,
             reviewCount: 156,
             imageName: "img_Adoc1",
-            tab: .upcoming
+            tab: .upcoming,
+            appointmentBooking: AppointmentBooking(
+                appointmentNumber: "#25",
+                doctor: Doctor(
+                    id: "2",
+                    name: "Dr. David Patel",
+                    image: "img_Adoc1",
+                    speciality: "Cardiologist",
+                    clinic: "Central Hospital",
+                    patientsCount: 2500,
+                    experienceYears: 12,
+                    ratingsCount: 5,
+                    reviewsCount: 156,
+                    rating: 5.0,
+                    price: 2500,
+                    about: "Dr. David Patel is a renowned cardiologist.",
+                    workingTime: "Mon | Tue | Wed"
+                ),
+                patient: Patient.samplePatients[0],
+                date: Calendar.current.date(from: DateComponents(year: 2026, month: 3, day: 22)) ?? Date(),
+                time: "10.15 AM",
+                estimatedTime: "10.30 AM",
+                doctorArrivalTime: "10.00 AM",
+                roomNumber: "F1-307"
+            )
         )
     ]
 
