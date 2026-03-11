@@ -5,13 +5,6 @@
 //  Created by Thirandi De Silva on 2026-02-25.
 //
 
-//
-//  NotificationView.swift
-//  ClinicFlow
-//
-//  Created by M H T U De Silva
-//
-
 import SwiftUI
 
 struct NotificationView: View {
