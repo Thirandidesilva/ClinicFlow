@@ -157,7 +157,7 @@ struct SetupView: View {
                         // Apple Button
                         Button(action: {
                             viewModel.signInWithApple {
-                                goToTabBar = true  
+                                goToTabBar = true
                             }
                         }) {
                             HStack(spacing: 14) {
