@@ -18,7 +18,9 @@ struct InstructOneView: View {
     private let buttonColor = Color(red: 0.18, green: 0.32, blue: 0.87)
 
     var body: some View {
-        NavigationStack {
+        if viewModel.navigateToSetup {
+            SetupView()
+        } else {
             ZStack {
                 Color.white.ignoresSafeArea()
 
@@ -93,15 +95,11 @@ struct InstructOneView: View {
                     .padding(.bottom, 48)
                 }
             }
-            // MARK: - Navigation to SetupView
-            .navigationDestination(isPresented: $viewModel.navigateToSetup) {
-                SetupView()
-            }
-            .navigationBarHidden(true)
         }
     }
 }
 
 #Preview {
     InstructOneView()
+        .environmentObject(TabBarViewModel())
 }

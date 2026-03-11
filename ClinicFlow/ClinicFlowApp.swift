@@ -11,7 +11,9 @@ import SwiftUI
 struct ClinicFlowApp: App {
     var body: some Scene {
         WindowGroup {
-            TabBarNav()
+          // TabBarNav()
+        LandingView()
+            
         }
     }
 }

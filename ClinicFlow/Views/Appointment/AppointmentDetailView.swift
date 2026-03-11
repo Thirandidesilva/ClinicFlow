@@ -130,6 +130,7 @@ struct AppointmentDetailsView: View {
                     // MARK: - Check In Button
                     Button(action: {
                         showCheckInPopup = true
+                        tabManager.isTabBarHidden = true
                     }) {
                         Text("Check In")
                             .font(.system(size: 18, weight: .semibold))
@@ -182,10 +183,12 @@ struct AppointmentDetailsView: View {
                     roomNumber: booking.roomNumber,
                     onCheckIn: {
                         showCheckInPopup = false
+                        tabManager.isTabBarHidden = false
                         tabManager.navigationPath.append(NavigationRoute.consultation)
                     },
                     onCancel: {
                         showCheckInPopup = false
+                        tabManager.isTabBarHidden = false
                     }
                 )
             }
@@ -202,8 +205,11 @@ struct AppointmentDetailsView: View {
             }
         }
         .navigationBarHidden(true)
+        .onAppear {
+            tabManager.activeTab = .none
+        }
     }
-    
+
     private func formatDate(_ date: Date) -> String {
         let formatter = DateFormatter()
         formatter.dateStyle = .long

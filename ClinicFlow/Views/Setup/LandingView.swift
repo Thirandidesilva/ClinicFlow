@@ -10,49 +10,52 @@
 import SwiftUI
 
 struct LandingView: View {
-    
+
     @StateObject private var viewModel = Landingviewmodel()
-    
+    @State private var goToOnboarding = false
+
     private let backgroundColor = Color(#colorLiteral(red: 0.1490196078, green: 0.3607843137, blue: 0.9960784314, alpha: 0.9672237169))
-    
+
     var body: some View {
-        
-        NavigationStack {
-            
+
+        if goToOnboarding {
+            InstructOneView()
+        } else {
             ZStack {
-                
+
                 // Background
                 backgroundColor
                     .ignoresSafeArea()
-                
+
                 VStack(spacing: 0) {
-                    
+
                     Spacer()
-                    
+
                     // Title & Subtitle
                     VStack(spacing: 10) {
                         Text("Clinic Flow")
                             .font(.system(size: 40, weight: .bold))
                             .foregroundColor(.white)
-                        
+
                         Text("Your clinic visit, organized\nand Simplified")
                             .font(.system(size: 22, weight: .semibold))
                             .foregroundColor(.white)
                             .multilineTextAlignment(.center)
                             .lineSpacing(4)
                     }
-                    
+
                     Spacer()
-                    
+
                     // Get Started Button
-                    NavigationLink(destination: InstructOneView()) {
-                        
+                    Button {
+                        goToOnboarding = true
+                    } label: {
                         HStack(spacing: 12) {
                             Image("ic_landing")
                                 .resizable()
                                 .scaledToFit()
                                 .frame(width: 36, height: 36)
-                            
+
                             Text("Get Started")
                                 .font(.system(size: 25, weight: .semibold))
                                 .foregroundColor(.black)
@@ -67,11 +70,11 @@ struct LandingView: View {
                     .padding(.bottom, 48)
                 }
             }
-            .navigationBarHidden(true)
         }
     }
 }
 
 #Preview {
     LandingView()
+        .environmentObject(TabBarViewModel())
 }
